@@ -1,0 +1,141 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-inference-engine
+  namespace: default
+  labels:
+    app: vllm-engine
+    replica: "1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-engine
+      replica: "1"
+  template:
+    metadata:
+      labels:
+        app: vllm-engine
+        replica: "1"
+    spec:
+      tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Exists"
+        effect: "NoSchedule"
+      containers:
+      - name: vllm-server
+        image: vllm/vllm-openai:v0.6.3
+        args:
+        - "--model=/models/Mistral-7B-Instruct-v0.3"
+        - "--served-model-name=mistral-base"
+        - "--tensor-parallel-size=2"
+        - "--gpu-memory-utilization=0.85"
+        - "--max-model-len=4096"
+        - "--enable-lora"
+        - "--max-loras=4"
+        - "--max-lora-rank=64"
+        - "--lora-modules"
+        - "reasoning-math=/models/loras/reasoning-math"
+        - "coding-agent=/models/loras/coding-agent"
+        - "--port=8000"
+        - "--trust-remote-code"
+        - "--disable-log-requests"
+        env:
+        - name: NCCL_DEBUG
+          value: "INFO"
+        - name: NCCL_IB_DISABLE
+          value: "1"
+        - name: VLLM_LOGGING_LEVEL
+          value: "INFO"
+        resources:
+          limits:
+            nvidia.com/gpu: "2"
+            memory: "32Gi"
+            cpu: "12"
+          requests:
+            nvidia.com/gpu: "2"
+            memory: "16Gi"
+            cpu: "6"
+        ports:
+        - containerPort: 8000
+          name: http
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 120
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 90
+          periodSeconds: 5
+        volumeMounts:
+        - name: dshm
+          mountPath: /dev/shm
+        - name: models-volume
+          mountPath: /models
+          readOnly: true
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 16Gi
+      - name: models-volume
+        persistentVolumeClaim:
+          claimName: llm-weights-cache-pvc
+          readOnly: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-engine-svc
+  namespace: default
+  labels:
+    app: vllm-engine
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: vllm-engine
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-engine-1-svc
+  namespace: default
+  labels:
+    app: vllm-engine
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: vllm-engine
+    replica: "1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-engine-2-svc
+  namespace: default
+  labels:
+    app: vllm-engine
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: vllm-engine
+    replica: "2"

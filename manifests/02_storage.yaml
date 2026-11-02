@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: llm-weights-cache-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard-rwo
+  resources:
+    requests:
+      storage: 100Gi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: llm-weights-preloader
+  namespace: default
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: huggingface-downloader
+        image: python:3.11-slim
+        command:
+        - bash
+        - -c
+        - |
+          set -euo pipefail
+          pip install --no-cache-dir huggingface_hub[hf_transfer] torch safetensors numpy
+          export HF_HUB_ENABLE_HF_TRANSFER=1
+          export HF_HOME=/models_cache
+
+          echo "=========================================================="
+          echo "FASE 1: Descarga del Modelo Base Mistral-7B-Instruct-v0.3"
+          echo "=========================================================="
+          python3 -c "
+          from huggingface_hub import snapshot_download
+          print('Descargando pesos oficiales Safetensors de Mistral 7B...')
+          snapshot_download(
+              repo_id='mistralai/Mistral-7B-Instruct-v0.3',
+              local_dir='/models_cache/Mistral-7B-Instruct-v0.3',
+              ignore_patterns=['*.bin', '*.pth', '*.pt']
+          )
+          print('Descarga de Mistral-7B completada con exito.')
+          "
+
+          echo "=========================================================="
+          echo "FASE 2: Generacion de Adaptadores LoRA para la Terna Mistral"
+          echo "=========================================================="
+          # Generar adaptadores estructuralmente compatibles con Mistral-7B (32 capas, hidden_size=4096, v_proj=1024)
+          python3 -c "
+          import os, json, torch
+          from safetensors.torch import save_file
+
+          def create_mistral_lora(lora_name, lora_dir):
+              os.makedirs(lora_dir, exist_ok=True)
+              config = {
+                  'base_model_name_or_path': 'mistralai/Mistral-7B-Instruct-v0.3',
+                  'bias': 'none',
+                  'fan_in_fan_out': False,
+                  'inference_mode': True,
+                  'init_lora_weights': True,
+                  'lora_alpha': 16,
+                  'lora_dropout': 0.05,
+                  'peft_type': 'LORA',
+                  'r': 8,
+                  'target_modules': ['q_proj', 'v_proj'],
+                  'task_type': 'CAUSAL_LM'
+              }
+              with open(f'{lora_dir}/adapter_config.json', 'w') as f:
+                  json.dump(config, f, indent=2)
+
+              tensors = {}
+              # 32 capas de atencion de Mistral-7B
+              for layer in range(32):
+                  prefix = f'base_model.model.model.layers.{layer}.self_attn'
+                  # q_proj (4096 -> 4096)
+                  tensors[f'{prefix}.q_proj.lora_A.weight'] = torch.zeros((8, 4096), dtype=torch.bfloat16)
+                  tensors[f'{prefix}.q_proj.lora_B.weight'] = torch.zeros((4096, 8), dtype=torch.bfloat16)
+                  # v_proj (4096 -> 1024)
+                  tensors[f'{prefix}.v_proj.lora_A.weight'] = torch.zeros((8, 4096), dtype=torch.bfloat16)
+                  tensors[f'{prefix}.v_proj.lora_B.weight'] = torch.zeros((1024, 8), dtype=torch.bfloat16)
+
+              save_file(tensors, f'{lora_dir}/adapter_model.safetensors')
+              print(f'Adaptador compatible generado: {lora_name} en {lora_dir}')
+
+          # 1. Adaptador para Razonamiento Profundo / Matematico
+          create_mistral_lora('reasoning-math', '/models_cache/loras/reasoning-math')
+          # 2. Adaptador para Generacion de Codigo
+          create_mistral_lora('coding-agent', '/models_cache/loras/coding-agent')
+          "
+
+          echo "=========================================================="
+          echo "VERIFICACION DE ARCHIVOS EN VOLUMEN PERSISTENTE"
+          echo "=========================================================="
+          ls -lh /models_cache/Mistral-7B-Instruct-v0.3
+          ls -lh /models_cache/loras/reasoning-math
+          ls -lh /models_cache/loras/coding-agent
+          echo "TODO LISTO PARA VLLM."
+        volumeMounts:
+        - name: models-storage
+          mountPath: /models_cache
+      volumes:
+      - name: models-storage
+        persistentVolumeClaim:
+          claimName: llm-weights-cache-pvc

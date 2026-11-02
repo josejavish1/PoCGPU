@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mistral-weights-pv
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  claimRef:
+    namespace: default
+    name: llm-weights-cache-pvc
+  csi:
+    driver: pd.csi.storage.gke.io
+    volumeHandle: projects/sub403o4u0q5/zones/europe-west6-b/disks/mistral-weights-disk-ch
+    fsType: ext4
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: topology.gke.io/zone
+          operator: In
+          values:
+          - europe-west6-b
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: llm-weights-cache-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  volumeName: mistral-weights-pv

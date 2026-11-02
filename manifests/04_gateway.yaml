@@ -1,0 +1,246 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: litellm-db-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard-rwo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litellm-db
+  namespace: default
+  labels:
+    app: litellm-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: litellm-db
+  template:
+    metadata:
+      labels:
+        app: litellm-db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15-alpine
+        env:
+        - name: POSTGRES_DB
+          value: "litellm"
+        - name: POSTGRES_USER
+          value: "litellm_admin"
+        - name: POSTGRES_PASSWORD
+          value: "tier1_governance_pass"
+        - name: PGDATA
+          value: "/var/lib/postgresql/data/pgdata"
+        volumeMounts:
+        - name: db-data
+          mountPath: /var/lib/postgresql/data
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+        ports:
+        - containerPort: 5432
+      volumes:
+      - name: db-data
+        persistentVolumeClaim:
+          claimName: litellm-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litellm-db-svc
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: litellm-db
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litellm-gateway-config
+  namespace: default
+data:
+  config.yaml: |
+    model_list:
+      # --- SERVIDOR GPU 1 (Node 1 - 2x L4) ---
+      - model_name: light-model-fast
+        litellm_params:
+          model: openai/mistral-base
+          api_base: http://10.124.1.5:8000/v1
+          api_key: "none"
+          timeout: 15
+        model_info:
+          id: "servidor-gpu-1"
+
+      - model_name: light-model-coder
+        litellm_params:
+          model: openai/coding-agent
+          api_base: http://10.124.1.5:8000/v1
+          api_key: "none"
+          timeout: 15
+        model_info:
+          id: "servidor-gpu-1"
+
+      - model_name: reasoning-model
+        litellm_params:
+          model: openai/reasoning-math
+          api_base: http://10.124.1.5:8000/v1
+          api_key: "none"
+          timeout: 20
+        model_info:
+          id: "servidor-gpu-1"
+
+      # --- SERVIDOR GPU 2 (Node 2 - 2x L4) ---
+      - model_name: light-model-fast
+        litellm_params:
+          model: openai/mistral-base
+          api_base: http://10.124.2.5:8000/v1
+          api_key: "none"
+          timeout: 15
+        model_info:
+          id: "servidor-gpu-2"
+
+      - model_name: light-model-coder
+        litellm_params:
+          model: openai/coding-agent
+          api_base: http://10.124.2.5:8000/v1
+          api_key: "none"
+          timeout: 15
+        model_info:
+          id: "servidor-gpu-2"
+
+      - model_name: reasoning-model
+        litellm_params:
+          model: openai/reasoning-math
+          api_base: http://10.124.2.5:8000/v1
+          api_key: "none"
+          timeout: 20
+        model_info:
+          id: "servidor-gpu-2"
+
+      # --- DESBORDE EN LA NUBE (Google Cloud Gemini) ---
+      - model_name: gemini-cloud-backup
+        litellm_params:
+          model: openai/gemini-2.5-flash
+          api_base: https://generativelanguage.googleapis.com/v1beta/openai/
+          api_key: os.environ/GEMINI_API_KEY
+          timeout: 30
+        model_info:
+          id: "google-gemini-cloud"
+
+    general_settings:
+      master_key: "sk-tier1-master-governance-key-2026"
+      database_url: "postgresql://litellm_admin:tier1_governance_pass@litellm-db-svc:5432/litellm"
+
+    litellm_settings:
+      cache: true
+      cache_params:
+        type: "local"
+
+    router_settings:
+      routing_strategy: "least-busy"
+      fallbacks:
+        - light-model-fast: ["gemini-cloud-backup"]
+        - reasoning-model: ["gemini-cloud-backup"]
+        - light-model-coder: ["gemini-cloud-backup"]
+      allowed_fails: 2
+      cooldown_time: 30
+      num_retries: 2
+      timeout: 30
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enterprise-ai-gateway
+  namespace: default
+  labels:
+    app: ai-gateway
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: ai-gateway
+  template:
+    metadata:
+      labels:
+        app: ai-gateway
+    spec:
+      containers:
+      - name: litellm-proxy
+        image: ghcr.io/berriai/litellm:main-v1.49.0
+        args:
+        - "--config=/app/config.yaml"
+        - "--port=4000"
+        env:
+        - name: LITELLM_MASTER_KEY
+          value: "sk-tier1-master-governance-key-2026"
+        - name: DATABASE_URL
+          value: "postgresql://litellm_admin:tier1_governance_pass@litellm-db-svc:5432/litellm"
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gemini-api-secret
+              key: GEMINI_API_KEY
+        resources:
+          limits:
+            cpu: "2"
+            memory: "4Gi"
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+        ports:
+        - containerPort: 4000
+          name: http
+        livenessProbe:
+          httpGet:
+            path: /health/liveliness
+            port: 4000
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health/readiness
+            port: 4000
+          periodSeconds: 5
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+      volumes:
+      - name: config-volume
+        configMap:
+          name: litellm-gateway-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: enterprise-ai-gateway-svc
+  namespace: default
+  labels:
+    app: ai-gateway
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 4000
+    protocol: TCP
+    name: http
+  selector:
+    app: ai-gateway
