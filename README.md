@@ -74,9 +74,34 @@ Blueprint de ingeniería de infraestructura Tier-1 para servir modelos LLM concu
 ├── 08_ESTADO_ZURICH_Y_OPERACIONES.md   # Guía operativa: Hibernación, reactivación, credenciales y URLs
 ├── 09_MODELO_FINOPS_CALCULADORA.md     # Especificación FinOps: Sizing de hardware, Roofline y chargeback
 ├── 10_BACKLOG_FINOPS_INSTITUCIONAL.md  # Backlog técnico Tier-1: Primitivas neurosimbólicas y hoja de ruta
-├── docs/RFC_063_UNIVERSAL_HYBRID_FINOPS_ADVISOR_ARGON.md # Master Blueprint: Universal Hybrid FinOps Advisor (gemini-4-argon)
-├── docs/RFC_064_PHASE2_DOMAIN_SERVICES_SPECIFICATION_ARGON.md # Phase 2 Technical Specification: Pure Domain Services (gemini-4-argon)
-├── docs/RFC_065_ZERO_DEFECT_ZERO_HARDCODING_MASTER_PLAN_ARGON.md # Master Quality Plan: Universal Zero-Defect & Zero-Hardcoding (gemini-4-argon)
+├── config/                             # Catálogos declarativos, taxonomías y localización (Cero Hardcoding)
+│   ├── catalogs/                       # Catálogos de silicio, BOMs de chasis, modelos y multi-cloud pricing
+│   │   ├── hardware_catalog.json       # Aceleradores H100, L4, A100, H200, B200, 4090, MI300X y chasis OEM
+│   │   ├── models_catalog.json         # Arquitecturas Llama 3 (8B/70B/405B), DeepSeek V3 (671B), Mistral, Qwen
+│   │   └── pricing_catalog.json        # Precios Spot/On-Demand GCP, AWS, Azure, RunPod y tasas FX JIT
+│   ├── questionnaires/                 # Cuestionario estratégico de 5 dimensiones con pesos dinámicos
+│   ├── taxonomies/                     # Taxonomía unificada de verticales de industria y frameworks regulatorios
+│   └── locales.json                    # Registro simétrico i18n (EN/ES) desacoplado del código fuente
+├── src/                                # Arquitectura Hexagonal Pura (100% Technical English)
+│   ├── domain/                         # Núcleo de Dominio puro (Cero dependencias de framework/IO)
+│   │   ├── models/                     # Entidades inmutables: Workload, Hardware, Financial, Assessment
+│   │   ├── ports/                      # Puertos canónicos para registros, pricing, simulaciones y ledger
+│   │   └── services/                   # 5 Motores de cálculo certificados (Roofline, Actuarial, TCO, Gate, Wizard)
+│   ├── adapters/                       # Adaptadores de infraestructura (JSON loaders y Ledger SHA-256)
+│   └── application/                    # Orquestador de aplicación FinOpsAdvisorService
+├── tests/                              # Suite de pruebas automatizadas (70 tests pasando al 100%)
+│   ├── architecture/                   # Compuertas AST de pureza de dominio y desacoplamiento lingüístico
+│   ├── domain/                         # Pruebas unitarias y de propiedades matemáticas
+│   ├── adapters/                       # Pruebas de integración de adaptadores y antimanipulación de ledger
+│   └── integration/                    # Prueba end-to-end completa del flujo de asesoramiento FinOps
+├── docs/                               # Documentación y gobernanza institucional
+│   ├── RFC_063_UNIVERSAL_HYBRID_FINOPS_ADVISOR_ARGON.md # Master Blueprint: Universal Hybrid FinOps Advisor
+│   ├── RFC_064_PHASE2_DOMAIN_SERVICES_SPECIFICATION_ARGON.md # Phase 2 Technical Specification
+│   ├── RFC_065_ZERO_DEFECT_ZERO_HARDCODING_MASTER_PLAN_ARGON.md # Master Quality & Anti-Hardcoding Plan
+│   ├── AUDIT_REPORT_PHASE1_ARGON.md    # Dictamen de auditoría de Fase 1 (100/100)
+│   ├── AUDIT_REPORT_PHASE2_ARGON.md    # Dictamen de auditoría de Fase 2 (100/100)
+│   ├── AUDIT_REPORT_PHASE3_ARGON.md    # Dictamen de auditoría de Fase 3 (98/100 Production Ready)
+│   └── audit_screenshots/              # Evidencias fotográficas Playwright (1440px desktop y 375px móvil)
 ├── manifests/                          # Manifiestos YAML declarativos para Kubernetes
 │   ├── 01_gpu_audit.yaml               # Pod de diagnóstico de hardware y topología NCCL
 │   ├── 02_storage.yaml                 # PVC genérico y Job preloader de almacenamiento
@@ -112,3 +137,4 @@ Blueprint de ingeniería de infraestructura Tier-1 para servir modelos LLM concu
 4. **Verificación de Carga y Balanceo:** Comprobar la distribución Activo-Activo ejecutando `scripts/verify_balanced_saturation.py`.
 5. **Observabilidad:** Auditar métricas de silicio, colas y costes en el dashboard de Grafana (`http://<IP>:8082`).
 6. **Hibernación Segura:** Congelar el clúster a 0 nodos ($0.00/h de cómputo) siguiendo la sección 3.B de `08_ESTADO_ZURICH_Y_OPERACIONES.md`.
+7. **Universal Hybrid FinOps Advisor Platform:** Iniciar el simulador web reactivo con compuerta CFO, dimensionamiento Roofline, riesgo actuarial y libro mayor SHA-256 ejecutando `python3 scripts/web_calculator.py` (accesible en `http://<IP>:8001`). Toda la suite de verificación automatizada se valida con `pytest tests/` y la auditoría visual se certifica con `python3 scripts/audit_playwright.py`.
