@@ -23,6 +23,7 @@ An unresolved conflict blocks implementation or release. It must never be resolv
 - [Governance Manifest](constitution.manifest.json)
 - [Phase 0 Plan](PHASE_0_PLAN.md)
 - [Phase 0 Completion Report](PHASE_0_COMPLETION_REPORT.md)
+- [Phase 1 Plan](PHASE_1_PLAN.md)
 - [Product Constitution](PRODUCT_CONSTITUTION.md)
 - [Domain Glossary](DOMAIN_GLOSSARY.md)
 - [Requirements Traceability](REQUIREMENTS_TRACEABILITY.md)

@@ -51,6 +51,21 @@
         ]
       },
       {
+        "path": "PHASE_1_PLAN.md",
+        "required_headings": [
+          "# Phase 1 Plan: Canonical Foundation and Governed Contracts",
+          "## Objective",
+          "## Scope",
+          "## Domain contracts",
+          "## Migration plan",
+          "## Delivery increments",
+          "## Requirements traceability",
+          "## Risk controls",
+          "## Acceptance criteria",
+          "## Stop conditions"
+        ]
+      },
+      {
         "path": "PRODUCT_CONSTITUTION.md",
         "required_headings": [
           "# Product Constitution",
@@ -202,6 +217,51 @@
           "## Decision",
           "## Consequences"
         ]
+      },
+      {
+        "path": "adr/0006-canonical-package-boundary.md",
+        "required_headings": [
+          "# ADR-0006: Canonical Package and Composition Boundary",
+          "## Context",
+          "## Decision",
+          "## Consequences"
+        ]
+      },
+      {
+        "path": "adr/0007-immutable-governed-records.md",
+        "required_headings": [
+          "# ADR-0007: Immutable Governed Records",
+          "## Context",
+          "## Decision",
+          "## Consequences"
+        ]
+      },
+      {
+        "path": "adr/0008-explicit-policy-resolution.md",
+        "required_headings": [
+          "# ADR-0008: Explicit Policy Resolution",
+          "## Context",
+          "## Decision",
+          "## Consequences"
+        ]
+      },
+      {
+        "path": "adr/0009-canonical-serialization.md",
+        "required_headings": [
+          "# ADR-0009: Canonical Serialization and Snapshot Identity",
+          "## Context",
+          "## Decision",
+          "## Consequences"
+        ]
+      },
+      {
+        "path": "adr/0010-evidence-first-legacy-removal.md",
+        "required_headings": [
+          "# ADR-0010: Evidence-First Legacy Removal",
+          "## Context",
+          "## Decision",
+          "## Consequences"
+        ]
       }
     ]
   },
@@ -312,7 +372,14 @@
         "RSK-021",
         "RSK-022",
         "RSK-023",
-        "RSK-024"
+        "RSK-024",
+        "RSK-025",
+        "RSK-026",
+        "RSK-027",
+        "RSK-028",
+        "RSK-029",
+        "RSK-030",
+        "RSK-031"
       ]
     },
     {
@@ -324,7 +391,12 @@
         "0002",
         "0003",
         "0004",
-        "0005"
+        "0005",
+        "0006",
+        "0007",
+        "0008",
+        "0009",
+        "0010"
       ]
     }
   ],

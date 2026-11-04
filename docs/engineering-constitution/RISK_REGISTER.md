@@ -36,6 +36,13 @@ Numeric risk scores are intentionally omitted until an organization risk policy 
 | RSK-022 | Formula change silently alters historical meaning. | Invalid comparisons and audit history. | HIGH | MEDIUM | Immutable formula versions. | Replay and migration tests. | 1-8 |
 | RSK-023 | Confidential prompts, credentials, or contracts enter logs. | Security and privacy incident. | CRITICAL | MEDIUM | Aggregated data contracts and secret boundaries. | Secret, privacy, and log scans. | 1-8 |
 | RSK-024 | Unsupported locale, number format, or right-to-left layout corrupts input or output. | Wrong values or unusable interface. | HIGH | MEDIUM | Canonical parsing and locale boundary. | Locale compatibility matrix. | 7 |
+| RSK-025 | Snapshot serialization changes with process, mapping order, Unicode form, or environment. | Replay identity and audit evidence become unreliable. | CRITICAL | MEDIUM | Versioned canonical serialization protocol. | Independent golden bytes and cross-process metamorphic tests. | 1 |
+| RSK-026 | Policy conflict is resolved by incidental input order or a built-in contextual precedence. | Wrong organization or jurisdiction policy silently controls a decision. | CRITICAL | HIGH | Explicit versioned resolution plans and override relationships. | Reordering, conflict, and cycle tests. | 1 |
+| RSK-027 | A legacy engine is removed before representative behavior and known defects are classified. | Migration evidence is lost and corrections cannot be reviewed. | HIGH | MEDIUM | Evidence-first legacy disposition workflow. | Migration inventory and fixture gate. | 1 |
+| RSK-028 | A public contract accepts binary float, implicit unit, or ambiguous numeric text. | Precision or dimensional error enters every later formula. | CRITICAL | MEDIUM | Strict decimal-string and typed-unit boundary. | Boundary, property, and malformed-input tests. | 1 |
+| RSK-029 | A governed record or repository lookup crosses tenant scope. | Confidentiality breach and incorrect scenario evidence. | CRITICAL | MEDIUM | Tenant identity on governed records and repository contracts. | Cross-tenant negative contract tests. | 1 |
+| RSK-030 | Dependency lock, build metadata, and installed artifact resolve different code or dependencies. | Tests cannot reproduce the delivered product. | HIGH | MEDIUM | Frozen lock and installed-wheel test path. | Lock drift, clean build, and undeclared-import gates. | 1 |
+| RSK-031 | A legacy language exception is rebaselined instead of remediated. | Non-English executable debt becomes permanent or expands silently. | HIGH | MEDIUM | Phase 1 requires an empty expiring ratchet. | Hash-ratchet and source-language validation. | 1 |
 
 ## FMEA workflow
 
