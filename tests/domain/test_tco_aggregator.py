@@ -76,8 +76,9 @@ class TestHybridTcoAggregator(unittest.TestCase):
         )
 
         self.cloud_spec = CloudInstancePricingSpec(
-            provider_id="AWS",
-            region="us-east-1",
+            instance_id="gcp-test-instance",
+            provider_id="GCP",
+            region="us-central1-a",
             instance_type="p5.48xlarge",
             accelerator_sku=self.accelerator,
             accelerators_per_instance=8,

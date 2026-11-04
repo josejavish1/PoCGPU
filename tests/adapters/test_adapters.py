@@ -9,6 +9,7 @@ import pytest
 
 from src.adapters.crypto_audit_ledger import CryptographicAuditLedgerAdapter
 from src.adapters.json_hardware_registry import JsonHardwareRegistryAdapter
+from src.adapters.json_model_registry import JsonModelRegistryAdapter
 from src.adapters.json_pricing_provider import JsonPricingProviderAdapter
 from src.adapters.json_questionnaire_loader import JsonQuestionnaireLoaderAdapter
 from src.domain.exceptions import DomainLookupError
@@ -35,6 +36,30 @@ def questionnaire_loader() -> JsonQuestionnaireLoaderAdapter:
     return JsonQuestionnaireLoaderAdapter(CONFIG_DIR / "questionnaires" / "questionnaires.json")
 
 
+@pytest.fixture
+def model_registry() -> JsonModelRegistryAdapter:
+    return JsonModelRegistryAdapter(CONFIG_DIR / "catalogs" / "models_catalog.json")
+
+
+def test_model_registry_resolves_profiles(model_registry: JsonModelRegistryAdapter) -> None:
+    models = model_registry.list_available_models()
+    assert "LLAMA_3_70B_INSTRUCT" in models
+    assert "DEEPSEEK_V3_671B_MOE_FP8" in models
+
+    profile = model_registry.get_model_workload_profile(
+        model_id="LLAMA_3_70B_INSTRUCT",
+        peak_concurrent_users=32,
+        max_context_length=8192,
+        avg_prompt_tokens=2048,
+        avg_generated_tokens=256,
+        baseline_rps=Decimal("4.0"),
+        peak_burst_rps=Decimal("8.0"),
+    )
+    assert profile.total_params_billion == Decimal("70.6000")
+    assert profile.layers == 80
+    assert profile.num_kv_heads == 8
+
+
 def test_hardware_registry_resolves_h100_and_unknown_raises(hardware_registry: JsonHardwareRegistryAdapter) -> None:
     spec = hardware_registry.get_accelerator_spec("NVIDIA_H100_SXM5_80GB")
     assert spec.vendor == "NVIDIA"
@@ -46,11 +71,9 @@ def test_hardware_registry_resolves_h100_and_unknown_raises(hardware_registry: J
 
 
 def test_hardware_registry_list_compatible_chassis(hardware_registry: JsonHardwareRegistryAdapter) -> None:
-    usd = CurrencyCode("USD")
     compatible = hardware_registry.list_compatible_chassis(
         min_vram_gb=Decimal("600.0"),
         max_rack_kw=Decimal("25.0"),
-        target_currency=usd,
     )
     assert len(compatible) >= 1
     assert any("H100" in c.chassis_id for c in compatible)
@@ -71,6 +94,15 @@ def test_pricing_provider_resolves_cloud_instances(pricing_provider: JsonPricing
     assert len(instances) >= 2
     assert any(inst.provider_id == "GCP" for inst in instances)
     assert any(inst.provider_id == "AWS" for inst in instances)
+
+    # Test direct lookup by instance_id
+    inst = pricing_provider.get_cloud_instance_by_id("gcp-a3-highgpu-8g-h100x8", target_currency=usd)
+    assert inst.instance_id == "gcp-a3-highgpu-8g-h100x8"
+    assert inst.provider_id == "GCP"
+
+    # Test list_all_cloud_instances
+    all_inst = pricing_provider.list_all_cloud_instances(target_currency=usd)
+    assert len(all_inst) >= 5
 
 
 def test_questionnaire_loader_fetches_schema(questionnaire_loader: JsonQuestionnaireLoaderAdapter) -> None:

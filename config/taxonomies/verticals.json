@@ -4,7 +4,7 @@
   "default_policies": {
     "constitutional_gate": {
       "max_rack_units_u": 42,
-      "max_rack_power_kw": "35.00",
+      "max_rack_power_kw": "120.00",
       "max_power_kw_by_cooling_topology": {
         "AIR_COOLED": "20.00",
         "DIRECT_LIQUID_COOLED": "60.00",
@@ -36,13 +36,18 @@
       "gflops_per_tflops": "1000",
       "tflops_scale_factor": "1000000000000",
       "activation_bytes_per_element": "2.0",
-      "active_batch_max_tokens": 4096,
+      "active_batch_max_tokens": 16384,
       "microbatch_tokens_per_user": 32,
       "cuda_context_overhead_gb": "1.0000",
       "kv_headroom_rebuild_buffer_gb": "2.0000",
       "min_kv_headroom_floor_gb": "0.1000",
       "baseline_mfu_ratio": "0.4500",
-      "baseline_mbu_ratio": "0.6500"
+      "baseline_mbu_ratio": "0.6500",
+      "mac_flops_per_token_param": "2.0",
+      "one_billion_scale": "1000000000",
+      "two_billion_scale": "2000000000",
+      "milliseconds_per_second": "1000.0",
+      "min_latency_ms_floor": "0.0001"
     },
     "actuarial_policy": {
       "hours_per_year": "8760",
@@ -51,14 +56,22 @@
       "seconds_per_hour": "3600",
       "min_lef_floor": "0.0001",
       "hot_spare_failover_mttr_hours": "0.2500",
-      "cloud_weight_streaming_gbps": "25.0"
+      "cloud_weight_streaming_gbps": "25.0",
+      "default_fallback_sla_penalty_usd": "1000.0000"
     },
     "tco_policy": {
       "default_hours_per_month": "730.00",
       "reserved_3yr_cutoff_months": 36,
       "reserved_1yr_cutoff_months": 12,
       "months_per_year": "12.00",
-      "hybrid_on_prem_majority_threshold": "0.5000"
+      "hybrid_on_prem_majority_threshold": "0.5000",
+      "default_spot_allocation_ratio": "0.5000",
+      "default_reserved_allocation_ratio": "0.3000",
+      "default_persistent_storage_gb": "500.00",
+      "default_monthly_egress_gb": "1000.00",
+      "default_management_plane_monthly_usd": "500.00",
+      "default_persistent_storage_monthly_usd": "400.00",
+      "default_network_egress_monthly_usd": "350.00"
     }
   },
   "compliance_frameworks": {

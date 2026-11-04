@@ -23,7 +23,6 @@ class HardwareRegistryPort(ABC):
         self,
         min_vram_gb: Decimal,
         max_rack_kw: Decimal,
-        target_currency: CurrencyCode,
     ) -> Sequence[ServerChassisSpec]:
         """Queries on-premise server chassis meeting thermal and capacity limits."""
         raise NotImplementedError

@@ -23,7 +23,7 @@ def test_finops_advisor_service_full_workflow() -> None:
 
     # Define enterprise datacenter facility
     facility = DatacenterFacilitySpec(
-        facility_id="ZURICH_TIER4_CPD",
+        facility_id="ZURICH_TIER4_DATACENTER",
         pue_rating=Decimal("1.2500"),
         max_rack_power_density_kw=Decimal("30.00"),
         electricity_rate_per_kwh=MonetaryAmount(Decimal("0.1600"), eur),
@@ -62,7 +62,7 @@ def test_finops_advisor_service_full_workflow() -> None:
     responses = {
         "Q1_SOVEREIGNTY": "Q1_CONFIDENTIAL_CORPORATE",
         "Q2_DUTY_CYCLE": "Q2_SUSTAINED_24_7_BASELINE",
-        "Q3_DATACENTER": "Q3_OWNED_CPD_AVAILABLE_KW",
+        "Q3_DATACENTER": "Q3_OWNED_DATACENTER_AVAILABLE_KW",
         "Q4_ACCOUNTING": "Q4_CAPEX_ASSET_DEPRECIATION",
         "Q5_OPERATIONS": "Q5_MATURE_SRE_HARDWARE_TEAM",
     }

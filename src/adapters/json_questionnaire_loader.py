@@ -15,21 +15,35 @@ from src.domain.ports.assessment_questionnaire import AssessmentQuestionnairePor
 
 
 class JsonQuestionnaireLoaderAdapter(AssessmentQuestionnairePort):
-    """Loads strategic non-functional assessment questionnaire schemas from JSON."""
+    """Loads strategic non-functional assessment questionnaire schemas with vertical-specific weights."""
 
     def __init__(self, questionnaire_path: Path) -> None:
         self._questionnaire_path = questionnaire_path
-        self._cached_schema: list[QuestionnaireItemSchema] = []
+        self._raw_data: dict = {}
         self._load_schema()
 
     def _load_schema(self) -> None:
         if not self._questionnaire_path.is_file():
             raise FileNotFoundError(f"Questionnaire file not found at: {self._questionnaire_path}")
+        self._raw_data = json.loads(self._questionnaire_path.read_text(encoding="utf-8"))
 
-        raw_data = json.loads(self._questionnaire_path.read_text(encoding="utf-8"))
+    def fetch_questionnaire_schema(
+        self,
+        vertical_id: str,
+        locale: str,
+    ) -> Sequence[QuestionnaireItemSchema]:
+        """Loads strategic questionnaire items customized for the requested industry vertical and locale."""
+        overrides = (
+            self._raw_data.get("vertical_overrides", {})
+            .get(vertical_id, {})
+            .get("question_weights", {})
+        )
 
         schema_items: list[QuestionnaireItemSchema] = []
-        for q in raw_data.get("questions", []):
+        for q in self._raw_data.get("questions", []):
+            qid = q["question_id"]
+            effective_weight = Decimal(overrides.get(qid, q["weight"]))
+
             options: list[QuestionnaireCriterionOption] = []
             for opt in q.get("options", []):
                 options.append(
@@ -45,20 +59,12 @@ class JsonQuestionnaireLoaderAdapter(AssessmentQuestionnairePort):
 
             schema_items.append(
                 QuestionnaireItemSchema(
-                    question_id=q["question_id"],
+                    question_id=qid,
                     dimension_name=q["dimension_name"],
                     i18n_prompt_key=q["i18n_prompt_key"],
-                    weight=Decimal(q["weight"]),
+                    weight=effective_weight,
                     options=tuple(options),
                 )
             )
 
-        self._cached_schema = schema_items
-
-    def fetch_questionnaire_schema(
-        self,
-        vertical_id: str,
-        locale: str,
-    ) -> Sequence[QuestionnaireItemSchema]:
-        """Loads strategic questionnaire items for the requested industry vertical and locale."""
-        return tuple(self._cached_schema)
+        return tuple(schema_items)

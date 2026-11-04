@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "version": "1.0.0",
-  "fx_rates_to_usd": {
+  "fx_rates_per_usd": {
     "USD": "1.0000",
     "EUR": "0.9200",
     "JPY": "154.5000",
@@ -72,6 +72,86 @@
       "cold_boot_rebuild_seconds": "150.0000",
       "storage_gb_monthly": "0.0700",
       "egress_gb_price": "0.0300"
+    },
+    "gcp-a2-ultragpu-8g-a100x8": {
+      "provider_id": "GCP",
+      "region": "us-central1-a",
+      "instance_type": "a2-ultragpu-8g",
+      "accelerator_sku_id": "NVIDIA_A100_SXM4_80GB",
+      "accelerators_per_instance": 8,
+      "currency": "USD",
+      "on_demand_hourly": "24.5000",
+      "reserved_1yr_hourly": "16.8000",
+      "reserved_3yr_hourly": "11.2000",
+      "spot_hourly_mean": "7.8000",
+      "spot_preemption_probability_daily": "0.0400",
+      "cold_boot_rebuild_seconds": "110.0000",
+      "storage_gb_monthly": "0.0800",
+      "egress_gb_price": "0.0850"
+    },
+    "aws-p5e-48xlarge-h200x8": {
+      "provider_id": "AWS",
+      "region": "us-east-1",
+      "instance_type": "p5e.48xlarge",
+      "accelerator_sku_id": "NVIDIA_H200_SXM5_141GB",
+      "accelerators_per_instance": 8,
+      "currency": "USD",
+      "on_demand_hourly": "38.5000",
+      "reserved_1yr_hourly": "26.0000",
+      "reserved_3yr_hourly": "18.5000",
+      "spot_hourly_mean": "14.0000",
+      "spot_preemption_probability_daily": "0.0380",
+      "cold_boot_rebuild_seconds": "130.0000",
+      "storage_gb_monthly": "0.1000",
+      "egress_gb_price": "0.0900"
+    },
+    "lambda-8x-b200-sxm6": {
+      "provider_id": "LAMBDA",
+      "region": "us-west-1",
+      "instance_type": "lambda-8x-b200",
+      "accelerator_sku_id": "NVIDIA_B200_SXM6_192GB",
+      "accelerators_per_instance": 8,
+      "currency": "USD",
+      "on_demand_hourly": "48.0000",
+      "reserved_1yr_hourly": "34.0000",
+      "reserved_3yr_hourly": "25.0000",
+      "spot_hourly_mean": "19.5000",
+      "spot_preemption_probability_daily": "0.0500",
+      "cold_boot_rebuild_seconds": "140.0000",
+      "storage_gb_monthly": "0.0800",
+      "egress_gb_price": "0.0500"
+    },
+    "runpod-4x-rtx4090": {
+      "provider_id": "RUNPOD",
+      "region": "global",
+      "instance_type": "4x-rtx-4090",
+      "accelerator_sku_id": "NVIDIA_RTX_4090_24GB",
+      "accelerators_per_instance": 4,
+      "currency": "USD",
+      "on_demand_hourly": "3.1600",
+      "reserved_1yr_hourly": "2.4000",
+      "reserved_3yr_hourly": "1.8000",
+      "spot_hourly_mean": "1.3600",
+      "spot_preemption_probability_daily": "0.0650",
+      "cold_boot_rebuild_seconds": "60.0000",
+      "storage_gb_monthly": "0.0700",
+      "egress_gb_price": "0.0300"
+    },
+    "azure-nd96isr-mi300x": {
+      "provider_id": "AZURE",
+      "region": "eastus2",
+      "instance_type": "Standard_ND96isr_MI300X_v5",
+      "accelerator_sku_id": "AMD_MI300X_192GB",
+      "accelerators_per_instance": 8,
+      "currency": "USD",
+      "on_demand_hourly": "36.0000",
+      "reserved_1yr_hourly": "24.5000",
+      "reserved_3yr_hourly": "16.8000",
+      "spot_hourly_mean": "12.5000",
+      "spot_preemption_probability_daily": "0.0420",
+      "cold_boot_rebuild_seconds": "120.0000",
+      "storage_gb_monthly": "0.0900",
+      "egress_gb_price": "0.0870"
     }
   }
 }

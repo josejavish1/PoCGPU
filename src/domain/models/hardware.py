@@ -160,6 +160,7 @@ class ServerChassisSpec:
 class CloudInstancePricingSpec:
     """Cloud VM instance specification with Spot and On-Demand pricing."""
 
+    instance_id: str
     provider_id: str
     region: str
     instance_type: str

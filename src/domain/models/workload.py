@@ -160,6 +160,8 @@ class RooflineSimulationResult:
     memory_bus_utilization_ratio: Decimal        # Normalized in [0.0, 1.0]
     model_flops_utilization_ratio: Decimal       # Normalized in [0.0, 1.0]
     is_memory_bound: bool
+    is_ttft_sla_met: bool = True
+    is_tpot_sla_met: bool = True
 
     def __post_init__(self) -> None:
         if isinstance(self.tensor_parallel_degree, bool) or not isinstance(self.tensor_parallel_degree, int) or self.tensor_parallel_degree <= 0:

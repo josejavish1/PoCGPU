@@ -23,6 +23,28 @@ class PricingProviderPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def get_cloud_instance_by_id(
+        self,
+        instance_id: str,
+        target_currency: CurrencyCode,
+    ) -> CloudInstancePricingSpec:
+        """Fetches a specific cloud VM instance converted to target currency. Raises DomainLookupError if not found."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def list_all_cloud_instances(
+        self,
+        target_currency: CurrencyCode,
+    ) -> Sequence[CloudInstancePricingSpec]:
+        """Returns all configured cloud VM instances converted to target currency."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_available_currencies(self) -> Sequence[str]:
+        """Returns all supported ISO-4217 currency codes."""
+        raise NotImplementedError
+
+    @abstractmethod
     def convert_currency(
         self,
         amount: MonetaryAmount,

@@ -2,6 +2,7 @@
 
 from src.domain.ports.hardware_registry import HardwareRegistryPort
 from src.domain.ports.pricing_provider import PricingProviderPort
+from src.domain.ports.model_registry import ModelRegistryPort
 from src.domain.ports.assessment_questionnaire import (
     AssessmentQuestionnairePort,
     ArchetypeRecommendationPort,
@@ -18,6 +19,7 @@ from src.domain.ports.audit_ledger import AuditLedgerPort
 __all__ = [
     "HardwareRegistryPort",
     "PricingProviderPort",
+    "ModelRegistryPort",
     "AssessmentQuestionnairePort",
     "ArchetypeRecommendationPort",
     "RooflineSimulationPort",

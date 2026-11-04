@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "models": {
+    "MISTRAL_7B_INSTRUCT": {
+      "display_name": "Mistral 7B Instruct v0.3",
+      "total_params_billion": "7.2400",
+      "active_params_billion": "7.2400",
+      "layers": 32,
+      "hidden_size": 4096,
+      "num_query_heads": 32,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "attention_type": "GQA",
+      "mla_latent_dim": null,
+      "default_quantization": "FP16",
+      "weights_bytes_per_param": "2.0000",
+      "kv_cache_bytes_per_value": "2.0000",
+      "default_max_context_length": 8192,
+      "target_ttft_seconds": "0.2000",
+      "target_tpot_ms": "15.00"
+    },
+    "LLAMA_3_8B_INSTRUCT": {
+      "display_name": "Meta Llama 3 8B Instruct",
+      "total_params_billion": "8.0300",
+      "active_params_billion": "8.0300",
+      "layers": 32,
+      "hidden_size": 4096,
+      "num_query_heads": 32,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "attention_type": "GQA",
+      "mla_latent_dim": null,
+      "default_quantization": "FP16",
+      "weights_bytes_per_param": "2.0000",
+      "kv_cache_bytes_per_value": "2.0000",
+      "default_max_context_length": 8192,
+      "target_ttft_seconds": "0.2200",
+      "target_tpot_ms": "16.00"
+    },
+    "LLAMA_3_70B_INSTRUCT": {
+      "display_name": "Meta Llama 3 70B Instruct",
+      "total_params_billion": "70.6000",
+      "active_params_billion": "70.6000",
+      "layers": 80,
+      "hidden_size": 8192,
+      "num_query_heads": 64,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "attention_type": "GQA",
+      "mla_latent_dim": null,
+      "default_quantization": "FP16",
+      "weights_bytes_per_param": "2.0000",
+      "kv_cache_bytes_per_value": "2.0000",
+      "default_max_context_length": 8192,
+      "target_ttft_seconds": "0.5000",
+      "target_tpot_ms": "25.00"
+    },
+    "LLAMA_3_1_405B_INSTRUCT": {
+      "display_name": "Meta Llama 3.1 405B Instruct",
+      "total_params_billion": "405.0000",
+      "active_params_billion": "405.0000",
+      "layers": 126,
+      "hidden_size": 16384,
+      "num_query_heads": 128,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "attention_type": "GQA",
+      "mla_latent_dim": null,
+      "default_quantization": "FP8",
+      "weights_bytes_per_param": "1.0000",
+      "kv_cache_bytes_per_value": "1.0000",
+      "default_max_context_length": 16384,
+      "target_ttft_seconds": "1.2000",
+      "target_tpot_ms": "45.00"
+    },
+    "DEEPSEEK_V3_671B_MOE_FP8": {
+      "display_name": "DeepSeek V3 671B MoE",
+      "total_params_billion": "671.0000",
+      "active_params_billion": "37.0000",
+      "layers": 61,
+      "hidden_size": 7168,
+      "num_query_heads": 128,
+      "num_kv_heads": 128,
+      "head_dim": 128,
+      "attention_type": "MLA",
+      "mla_latent_dim": 512,
+      "default_quantization": "FP8",
+      "weights_bytes_per_param": "1.0000",
+      "kv_cache_bytes_per_value": "1.0000",
+      "default_max_context_length": 16384,
+      "target_ttft_seconds": "0.8000",
+      "target_tpot_ms": "30.00"
+    },
+    "QWEN_2_5_72B_INSTRUCT": {
+      "display_name": "Qwen 2.5 72B Instruct",
+      "total_params_billion": "72.7000",
+      "active_params_billion": "72.7000",
+      "layers": 80,
+      "hidden_size": 8192,
+      "num_query_heads": 64,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "attention_type": "GQA",
+      "mla_latent_dim": null,
+      "default_quantization": "FP16",
+      "weights_bytes_per_param": "2.0000",
+      "kv_cache_bytes_per_value": "2.0000",
+      "default_max_context_length": 16384,
+      "target_ttft_seconds": "0.5500",
+      "target_tpot_ms": "26.00"
+    }
+  },
+  "quantization_bytes_map": {
+    "FP32": {
+      "weights_bytes_per_param": "4.0000",
+      "kv_cache_bytes_per_value": "4.0000"
+    },
+    "FP16": {
+      "weights_bytes_per_param": "2.0000",
+      "kv_cache_bytes_per_value": "2.0000"
+    },
+    "BF16": {
+      "weights_bytes_per_param": "2.0000",
+      "kv_cache_bytes_per_value": "2.0000"
+    },
+    "FP8": {
+      "weights_bytes_per_param": "1.0000",
+      "kv_cache_bytes_per_value": "1.0000"
+    },
+    "INT8": {
+      "weights_bytes_per_param": "1.0000",
+      "kv_cache_bytes_per_value": "1.0000"
+    },
+    "FP6": {
+      "weights_bytes_per_param": "0.7500",
+      "kv_cache_bytes_per_value": "1.0000"
+    },
+    "INT4": {
+      "weights_bytes_per_param": "0.5000",
+      "kv_cache_bytes_per_value": "1.0000"
+    },
+    "NF4": {
+      "weights_bytes_per_param": "0.5000",
+      "kv_cache_bytes_per_value": "1.0000"
+    },
+    "AWQ": {
+      "weights_bytes_per_param": "0.5000",
+      "kv_cache_bytes_per_value": "1.0000"
+    },
+    "GPTQ": {
+      "weights_bytes_per_param": "0.5000",
+      "kv_cache_bytes_per_value": "1.0000"
+    }
+  }
+}

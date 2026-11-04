@@ -135,7 +135,8 @@ class RooflinePhysicsEngine(RooflineSimulationPort):
         candidate_tps = sorted(
             [
                 d for d in range(1, accelerators_per_node + 1)
-                if (workload.num_query_heads % d == 0)
+                if (accelerators_per_node % d == 0)
+                and (workload.num_query_heads % d == 0)
                 and (workload.attention_type == AttentionType.MLA or workload.num_kv_heads % d == 0 or d % workload.num_kv_heads == 0)
             ],
             reverse=True,
@@ -160,31 +161,7 @@ class RooflinePhysicsEngine(RooflineSimulationPort):
             replica_usable_vram = single_node_usable_vram * Decimal(nodes_per_replica)
             replica_kv_headroom = replica_usable_vram - weights_vram_gb - activation_vram_gb
 
-        # Data Parallel (DP) replicas needed to absorb total KV cache demand
-        dp_replicas = max(
-            1,
-            decimal_ceil_div(kv_cache_vram_gb, max(p.min_kv_headroom_floor_gb, replica_kv_headroom)),
-        )
-        required_nodes = dp_replicas * nodes_per_replica
-        total_cluster_accelerators = required_nodes * accelerators_per_node
-
-        cluster_total_vram_pool_gb = (
-            accelerator.vram_gb * Decimal(total_cluster_accelerators)
-        ).quantize(Decimal("0.0001"), rounding=ROUND_HALF_EVEN)
-
-        total_weights_cluster_vram = weights_vram_gb * Decimal(dp_replicas)
-        total_required_vram_gb = (
-            total_weights_cluster_vram + kv_cache_vram_gb + (activation_vram_gb * Decimal(dp_replicas))
-        ).quantize(Decimal("0.0001"), rounding=ROUND_HALF_EVEN)
-
-        vram_utilization_ratio = min(
-            Decimal("1.0000"),
-            (total_required_vram_gb / cluster_total_vram_pool_gb).quantize(
-                Decimal("0.0001"), rounding=ROUND_HALF_EVEN
-            ),
-        )
-
-        # 5. Quantization-Aware Compute Selection
+        # 5. Quantization-Aware Silicon Compute Selection
         if workload.quantization == QuantizationPrecision.FP8 and accelerator.fp8_tflops > Decimal("0"):
             selected_silicon_tflops = accelerator.fp8_tflops
         elif (
@@ -216,6 +193,54 @@ class RooflinePhysicsEngine(RooflineSimulationPort):
             * Decimal(single_replica_accelerators)
         )
 
+        # In pipeline parallelism decode, instantaneous weight streaming is bounded by TP degree across stages
+        decode_stage_bw_gbps = (
+            accelerator.memory_bandwidth_gbps
+            * accelerator.tensor_parallel_efficiency_factor
+            * Decimal(tp_degree)
+        )
+
+        # Single-replica decode capacity estimate for sizing (including context KV reads)
+        avg_active_context_tokens = Decimal(workload.avg_prompt_tokens) + (Decimal(workload.avg_generated_tokens) / p.mac_flops_per_token_param)
+        nominal_kv_bytes_per_step = Decimal(workload.peak_concurrent_users) * avg_active_context_tokens * bytes_per_token
+        single_replica_bytes_per_step = active_weights_bytes + nominal_kv_bytes_per_step
+        nominal_effective_decode_bytes_sec = decode_stage_bw_gbps * p.bytes_per_gigabyte_sec * p.baseline_mbu_ratio
+        single_replica_tpot_sec = single_replica_bytes_per_step / nominal_effective_decode_bytes_sec
+        single_replica_tok_per_sec = Decimal("1.0") / max(Decimal("0.0001"), single_replica_tpot_sec)
+        single_replica_aggregate_tok_s = single_replica_tok_per_sec * Decimal(workload.peak_concurrent_users)
+
+        # Throughput SLA requirement based on sustained baseline queries
+        required_baseline_tok_s = workload.baseline_rps * Decimal(workload.avg_generated_tokens)
+        dp_replicas_throughput = max(1, decimal_ceil_div(required_baseline_tok_s, max(Decimal("1.0"), single_replica_aggregate_tok_s)))
+
+        # Data Parallel (DP) replicas needed to absorb total KV cache demand AND meet throughput SLA
+        dp_replicas_vram = max(
+            1,
+            decimal_ceil_div(kv_cache_vram_gb, max(p.min_kv_headroom_floor_gb, replica_kv_headroom)),
+        )
+        dp_replicas = max(dp_replicas_vram, dp_replicas_throughput)
+
+        # Intra-node replicas packing if accelerators_per_node >= tp_degree * nodes_per_replica
+        intra_node_replicas = max(1, accelerators_per_node // (tp_degree * nodes_per_replica))
+        required_nodes = decimal_ceil_div(Decimal(dp_replicas), Decimal(intra_node_replicas)) * nodes_per_replica
+        total_cluster_accelerators = required_nodes * accelerators_per_node
+
+        cluster_total_vram_pool_gb = (
+            accelerator.vram_gb * Decimal(total_cluster_accelerators)
+        ).quantize(Decimal("0.0001"), rounding=ROUND_HALF_EVEN)
+
+        total_weights_cluster_vram = weights_vram_gb * Decimal(dp_replicas)
+        total_required_vram_gb = (
+            total_weights_cluster_vram + kv_cache_vram_gb + (activation_vram_gb * Decimal(dp_replicas))
+        ).quantize(Decimal("0.0001"), rounding=ROUND_HALF_EVEN)
+
+        vram_utilization_ratio = min(
+            Decimal("1.0000"),
+            (total_required_vram_gb / cluster_total_vram_pool_gb).quantize(
+                Decimal("0.0001"), rounding=ROUND_HALF_EVEN
+            ),
+        )
+
         cluster_eff_bw_gbps = (
             accelerator.memory_bandwidth_gbps
             * accelerator.tensor_parallel_efficiency_factor
@@ -237,7 +262,7 @@ class RooflinePhysicsEngine(RooflineSimulationPort):
         avg_active_context_tokens = Decimal(workload.avg_prompt_tokens) + (Decimal(workload.avg_generated_tokens) / p.mac_flops_per_token_param)
         kv_bytes_per_decode_step = Decimal(users_per_replica) * avg_active_context_tokens * bytes_per_token
         bytes_per_decode_step = active_weights_bytes + kv_bytes_per_decode_step
-        effective_decode_bytes_sec = replica_eff_bw_gbps * p.bytes_per_gigabyte_sec * p.baseline_mbu_ratio
+        effective_decode_bytes_sec = decode_stage_bw_gbps * p.bytes_per_gigabyte_sec * p.baseline_mbu_ratio
 
         tpot_seconds = bytes_per_decode_step / effective_decode_bytes_sec
         tpot_ms_per_token = (tpot_seconds * p.milliseconds_per_second).quantize(
@@ -248,14 +273,14 @@ class RooflinePhysicsEngine(RooflineSimulationPort):
             p.milliseconds_per_second / max(p.min_latency_ms_floor, tpot_ms_per_token)
         ).quantize(Decimal("0.01"), rounding=ROUND_HALF_EVEN)
 
-        aggregate_cluster_throughput = (
+        aggregate_cluster_throughput_tok_s = (
             tokens_per_second_per_user * Decimal(workload.peak_concurrent_users)
         ).quantize(Decimal("0.01"), rounding=ROUND_HALF_EVEN)
 
         # 6. Physical Memory Bus Utilization Ratio (Non-Tautological, Non-Inflated Continuous Batch Sizing)
         actual_demanded_tokens_sec = min(
             workload.peak_burst_rps * Decimal(workload.avg_generated_tokens),
-            aggregate_cluster_throughput,
+            aggregate_cluster_throughput_tok_s,
         )
         decode_steps_per_sec = actual_demanded_tokens_sec / Decimal(max(1, workload.peak_concurrent_users))
         actual_bus_bandwidth_demand = decode_steps_per_sec * bytes_per_decode_step * Decimal(dp_replicas)
@@ -278,6 +303,9 @@ class RooflinePhysicsEngine(RooflineSimulationPort):
         )
         is_memory_bound = operational_intensity_prefill < ridge_point_flops_per_byte
 
+        is_ttft_sla_met = bool(ttft_seconds <= workload.target_ttft_seconds)
+        is_tpot_sla_met = bool(tpot_ms_per_token <= workload.target_tpot_ms)
+
         return RooflineSimulationResult(
             chassis_or_instance_id=candidate_id,
             tensor_parallel_degree=tp_degree,
@@ -292,8 +320,10 @@ class RooflinePhysicsEngine(RooflineSimulationPort):
             ttft_seconds=ttft_seconds,
             tpot_ms_per_token=tpot_ms_per_token,
             tokens_per_second_per_user=tokens_per_second_per_user,
-            aggregate_cluster_throughput_tok_s=aggregate_cluster_throughput,
+            aggregate_cluster_throughput_tok_s=aggregate_cluster_throughput_tok_s,
             memory_bus_utilization_ratio=memory_bus_utilization_ratio,
             model_flops_utilization_ratio=p.baseline_mfu_ratio,
             is_memory_bound=is_memory_bound,
+            is_ttft_sla_met=is_ttft_sla_met,
+            is_tpot_sla_met=is_tpot_sla_met,
         )

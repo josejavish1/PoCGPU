@@ -4,7 +4,7 @@ Enterprise Tier-1 Universal Hybrid FinOps Advisor Platform
 ==========================================================
 Unified FastAPI backend & reactive Vanilla HTML5/CSS3/SVG/ES6 Single Page Application.
 Features:
-- Guided 5-Question Strategic Assessment Wizard (Sovereignty, Duty Cycle, CPD, CapEx/OpEx, SRE).
+- Guided 5-Question Strategic Assessment Wizard (Sovereignty, Duty Cycle, Datacenter, CapEx/OpEx, SRE).
 - Algorithmic Archetype Recommendation: Sovereign On-Prem vs Elastic Cloud vs Hybrid Cloud-Bursting.
 - Pre-Flight CFO Constitutional Audit Gate (Physical, Thermal, Silicon, and Financial Invariants).
 - Open FAIR Quantitative Actuarial Risk Engine (Hardware Silicon AFR / RMA MTTR vs Cloud Spot Preemption).
@@ -26,25 +26,53 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel
 import uvicorn
 
 from src.application.finops_advisor_service import FinOpsAdvisorService
+from src.domain.exceptions import ConstitutionalGateViolationError, DomainException, DomainLookupError
 from src.domain.models.financial import CurrencyCode, MonetaryAmount
 from src.domain.models.hardware import CoolingTopology, DatacenterFacilitySpec
-from src.domain.models.workload import (
-    AttentionType,
-    LlmWorkloadProfile,
-    QuantizationPrecision,
-)
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
 app = FastAPI(title="Universal Hybrid LLM FinOps Advisor", version="2.0.0")
 
 # Initialize orchestrator service
 service = FinOpsAdvisorService(REPO_ROOT)
+
+
+@app.exception_handler(DomainLookupError)
+async def domain_lookup_exception_handler(request: Request, exc: DomainLookupError) -> JSONResponse:
+    return JSONResponse(status_code=404, content={"error_type": "DomainLookupError", "message": str(exc)})
+
+
+@app.exception_handler(ConstitutionalGateViolationError)
+async def constitutional_gate_exception_handler(request: Request, exc: ConstitutionalGateViolationError) -> JSONResponse:
+    return JSONResponse(
+        status_code=422,
+        content={
+            "error_type": "ConstitutionalGateViolationError",
+            "rule_code": exc.rule_code,
+            "i18n_key": exc.i18n_key,
+            "i18n_params": {k: str(v) for k, v in exc.i18n_params.items()},
+        },
+    )
+
+
+@app.exception_handler(DomainException)
+async def generic_domain_exception_handler(request: Request, exc: DomainException) -> JSONResponse:
+    return JSONResponse(status_code=400, content={"error_type": "DomainException", "message": str(exc)})
+
+
+@app.exception_handler(ValueError)
+async def value_error_exception_handler(request: Request, exc: ValueError) -> JSONResponse:
+    return JSONResponse(status_code=400, content={"error_type": "ValueError", "message": str(exc)})
+
+
+@app.exception_handler(TypeError)
+async def type_error_exception_handler(request: Request, exc: TypeError) -> JSONResponse:
+    return JSONResponse(status_code=400, content={"error_type": "TypeError", "message": str(exc)})
 
 
 class AssessmentEvaluationRequest(BaseModel):
@@ -53,8 +81,10 @@ class AssessmentEvaluationRequest(BaseModel):
     model_id: str
     concurrent_users: int = 32
     max_context_length: int = 8192
-    baseline_rps: float = 4.0
-    peak_burst_rps: float = 8.0
+    prompt_tokens: int = 2048
+    output_tokens: int = 256
+    baseline_rps: Decimal = Decimal("4.0000")
+    peak_burst_rps: Decimal = Decimal("8.0000")
     locale: str = "en"
 
 
@@ -66,135 +96,48 @@ class FullSimulationRequest(BaseModel):
     cloud_instance_id: str
     amortization_months: int = 36
     currency: str = "USD"
-    pue_rating: float = 1.25
-    electricity_kwh_rate: float = 0.16
-    colocation_rack_fee: float = 1500.0
+    pue_rating: Decimal = Decimal("1.2500")
+    electricity_kwh_rate: Decimal = Decimal("0.1600")
+    colocation_rack_fee: Decimal = Decimal("1500.00")
     cooling_type: str = "AIR_COOLED"
     concurrent_users: int = 32
     max_context_length: int = 8192
     prompt_tokens: int = 2048
     output_tokens: int = 256
-    baseline_rps: float = 4.0
-    peak_burst_rps: float = 8.0
+    baseline_rps: Decimal = Decimal("4.0000")
+    peak_burst_rps: Decimal = Decimal("8.0000")
     chassis_per_rack: int = 1
-
-
-def get_model_profile(model_id: str, users: int, ctx: int, prompt: int, out: int, base_rps: float, peak_rps: float) -> LlmWorkloadProfile:
-    """Resolves standard model architecture specs dynamically without hardcoding."""
-    if "70B" in model_id:
-        return LlmWorkloadProfile(
-            model_id=model_id,
-            display_name="Llama 3 70B Instruct",
-            total_params_billion=Decimal("70.6000"),
-            active_params_billion=Decimal("70.6000"),
-            layers=80,
-            hidden_size=8192,
-            num_query_heads=64,
-            num_kv_heads=8,
-            head_dim=128,
-            attention_type=AttentionType.GQA,
-            mla_latent_dim=None,
-            quantization=QuantizationPrecision.FP16,
-            weights_bytes_per_param=Decimal("2.0000"),
-            kv_cache_bytes_per_value=Decimal("2.0000"),
-            max_context_length=ctx,
-            peak_concurrent_users=users,
-            avg_prompt_tokens=prompt,
-            avg_generated_tokens=out,
-            baseline_rps=Decimal(str(base_rps)),
-            peak_burst_rps=Decimal(str(peak_rps)),
-            target_ttft_seconds=Decimal("0.5000"),
-            target_tpot_ms=Decimal("25.00"),
-        )
-    elif "DEEPSEEK" in model_id or "671B" in model_id:
-        return LlmWorkloadProfile(
-            model_id=model_id,
-            display_name="DeepSeek V3 671B MoE",
-            total_params_billion=Decimal("671.0000"),
-            active_params_billion=Decimal("37.0000"),
-            layers=61,
-            hidden_size=7168,
-            num_query_heads=128,
-            num_kv_heads=128,
-            head_dim=128,
-            attention_type=AttentionType.MLA,
-            mla_latent_dim=512,
-            quantization=QuantizationPrecision.FP8,
-            weights_bytes_per_param=Decimal("1.0000"),
-            kv_cache_bytes_per_value=Decimal("1.0000"),
-            max_context_length=ctx,
-            peak_concurrent_users=users,
-            avg_prompt_tokens=prompt,
-            avg_generated_tokens=out,
-            baseline_rps=Decimal(str(base_rps)),
-            peak_burst_rps=Decimal(str(peak_rps)),
-            target_ttft_seconds=Decimal("1.0000"),
-            target_tpot_ms=Decimal("35.00"),
-        )
-    else:  # 7B / 8B general
-        return LlmWorkloadProfile(
-            model_id=model_id,
-            display_name="Mistral 7B / Llama 8B",
-            total_params_billion=Decimal("7.2400"),
-            active_params_billion=Decimal("7.2400"),
-            layers=32,
-            hidden_size=4096,
-            num_query_heads=32,
-            num_kv_heads=8,
-            head_dim=128,
-            attention_type=AttentionType.GQA,
-            mla_latent_dim=None,
-            quantization=QuantizationPrecision.FP16,
-            weights_bytes_per_param=Decimal("2.0000"),
-            kv_cache_bytes_per_value=Decimal("2.0000"),
-            max_context_length=ctx,
-            peak_concurrent_users=users,
-            avg_prompt_tokens=prompt,
-            avg_generated_tokens=out,
-            baseline_rps=Decimal(str(base_rps)),
-            peak_burst_rps=Decimal(str(peak_rps)),
-            target_ttft_seconds=Decimal("0.2000"),
-            target_tpot_ms=Decimal("15.00"),
-        )
+    max_rack_units_u: int = 42
+    max_rack_power_density_kw: Decimal = Decimal("35.00")
 
 
 @app.get("/api/catalog")
 def get_catalog() -> dict[str, Any]:
     """Exposes dynamic hardware accelerators, chassis, cloud VMs, and localized translation keys."""
-    locales_file = REPO_ROOT / "config" / "locales.json"
-    locales = json.loads(locales_file.read_text(encoding="utf-8"))
+    locales = service.get_locales()
+    overview = service.get_catalog_overview()
+    cloud_instances = service.get_cloud_instances()
 
-    verticals_file = REPO_ROOT / "config" / "taxonomies" / "verticals.json"
-    verticals = json.loads(verticals_file.read_text(encoding="utf-8"))
+    cloud_instances_list = [
+        {
+            "instance_id": inst.instance_id,
+            "provider": inst.provider_id,
+            "type": inst.instance_type,
+            "region": inst.region,
+            "accelerator_sku_id": inst.accelerator_sku.sku_id,
+            "on_demand_hourly": str(inst.on_demand_hourly.amount),
+            "spot_hourly": str(inst.spot_hourly_mean.amount),
+            "currency": str(inst.on_demand_hourly.currency),
+        }
+        for inst in cloud_instances
+    ]
 
     return {
-        "accelerators": list(service._hardware_registry.available_accelerators.keys()),
-        "chassis": [
-            {
-                "chassis_id": c.chassis_id,
-                "oem_vendor": c.oem_vendor,
-                "model_name": c.model_name,
-                "accelerators": f"{c.accelerators_per_chassis}x {c.accelerator_sku.sku_id}",
-                "capex_price": str(c.capex_unit_price.amount),
-                "currency": str(c.capex_unit_price.currency),
-                "tdp_kw": str(c.total_chassis_tdp_kw),
-            }
-            for c in service._hardware_registry.available_chassis.values()
-        ],
-        "cloud_instances": [
-            {
-                "instance_id": inst_id,
-                "provider": inst.provider_id,
-                "type": inst.instance_type,
-                "region": inst.region,
-                "accelerators": f"{inst.accelerators_per_instance}x {inst.accelerator_sku.sku_id}",
-                "on_demand_hourly": str(inst.on_demand_hourly.amount),
-                "spot_hourly": str(inst.spot_hourly_mean.amount),
-                "currency": str(inst.on_demand_hourly.currency),
-            }
-            for inst_id, inst in service._pricing_provider.available_cloud_instances.items()
-        ],
-        "verticals": verticals.get("verticals", {}),
+        "models": overview["models"],
+        "chassis": overview["chassis"],
+        "cloud_instances": cloud_instances_list,
+        "verticals": overview["verticals"],
+        "currencies": list(service.get_available_currencies()),
         "translations": locales.get("translations", {}),
     }
 
@@ -230,14 +173,14 @@ def get_questionnaire(vertical_id: str = "BANKING_FINANCE", locale: str = "en") 
 @app.post("/api/assess")
 def evaluate_assessment(req: AssessmentEvaluationRequest) -> dict[str, Any]:
     """Evaluates client responses and outputs the optimal deployment archetype."""
-    workload = get_model_profile(
+    workload = service.get_model_profile(
         model_id=req.model_id,
-        users=req.concurrent_users,
-        ctx=req.max_context_length,
-        prompt=2048,
-        out=256,
-        base_rps=req.baseline_rps,
-        peak_rps=req.peak_burst_rps,
+        peak_concurrent_users=req.concurrent_users,
+        max_context_length=req.max_context_length,
+        avg_prompt_tokens=req.prompt_tokens,
+        avg_generated_tokens=req.output_tokens,
+        baseline_rps=req.baseline_rps,
+        peak_burst_rps=req.peak_burst_rps,
     )
     res = service.evaluate_guided_assessment(
         vertical_id=req.vertical_id,
@@ -262,24 +205,36 @@ def evaluate_assessment(req: AssessmentEvaluationRequest) -> dict[str, Any]:
 def run_simulation(req: FullSimulationRequest) -> dict[str, Any]:
     """Executes full mathematical, physical, and financial simulation across On-Prem and Cloud."""
     curr = CurrencyCode(req.currency.upper())
-    facility = DatacenterFacilitySpec(
-        facility_id="CLIENT_CPD",
-        pue_rating=Decimal(str(req.pue_rating)),
-        max_rack_power_density_kw=Decimal("35.00"),
-        electricity_rate_per_kwh=MonetaryAmount(Decimal(str(req.electricity_kwh_rate)), curr),
-        colocation_rack_monthly_fee=MonetaryAmount(Decimal(str(req.colocation_rack_fee)), curr),
-        cooling_topology=CoolingTopology[req.cooling_type],
-        max_rack_units_u=42,
+
+    if req.cooling_type not in [c.name for c in CoolingTopology]:
+        raise HTTPException(status_code=400, detail=f"Invalid cooling_type '{req.cooling_type}'.")
+
+    usd = CurrencyCode("USD")
+    converted_electricity = service.convert_currency(
+        MonetaryAmount(req.electricity_kwh_rate, usd), curr
+    )
+    converted_colocation = service.convert_currency(
+        MonetaryAmount(req.colocation_rack_fee, usd), curr
     )
 
-    workload = get_model_profile(
+    facility = DatacenterFacilitySpec(
+        facility_id="CLIENT_DATACENTER",
+        pue_rating=req.pue_rating,
+        max_rack_power_density_kw=req.max_rack_power_density_kw,
+        electricity_rate_per_kwh=converted_electricity,
+        colocation_rack_monthly_fee=converted_colocation,
+        cooling_topology=CoolingTopology[req.cooling_type],
+        max_rack_units_u=req.max_rack_units_u,
+    )
+
+    workload = service.get_model_profile(
         model_id=req.model_id,
-        users=req.concurrent_users,
-        ctx=req.max_context_length,
-        prompt=req.prompt_tokens,
-        out=req.output_tokens,
-        base_rps=req.baseline_rps,
-        peak_rps=req.peak_burst_rps,
+        peak_concurrent_users=req.concurrent_users,
+        max_context_length=req.max_context_length,
+        avg_prompt_tokens=req.prompt_tokens,
+        avg_generated_tokens=req.output_tokens,
+        baseline_rps=req.baseline_rps,
+        peak_burst_rps=req.peak_burst_rps,
     )
 
     return service.run_full_advisory_simulation(

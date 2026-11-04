@@ -73,8 +73,8 @@
       "weight": "2.0000",
       "options": [
         {
-          "option_id": "Q3_OWNED_CPD_AVAILABLE_KW",
-          "i18n_label_key": "questionnaire.opt.q3.owned_cpd",
+          "option_id": "Q3_OWNED_DATACENTER_AVAILABLE_KW",
+          "i18n_label_key": "questionnaire.opt.q3.owned_datacenter",
           "on_prem_affinity_score": "100.0000",
           "cloud_affinity_score": "30.0000",
           "is_hard_on_prem_veto": false,
@@ -162,5 +162,22 @@
         }
       ]
     }
-  ]
+  ],
+  "vertical_overrides": {
+    "DEFENSE_NATIONAL_SECURITY": {
+      "question_weights": {
+        "Q1_SOVEREIGNTY": "3.5000"
+      }
+    },
+    "BANKING_FINANCE": {
+      "question_weights": {
+        "Q1_SOVEREIGNTY": "3.0000"
+      }
+    },
+    "RETAIL_ECOMMERCE": {
+      "question_weights": {
+        "Q2_DUTY_CYCLE": "3.0000"
+      }
+    }
+  }
 }

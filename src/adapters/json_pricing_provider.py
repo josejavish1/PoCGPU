@@ -35,7 +35,8 @@ class JsonPricingProviderAdapter(PricingProviderPort):
 
         raw_data = json.loads(self._pricing_path.read_text(encoding="utf-8"))
 
-        for currency_str, rate_str in raw_data.get("fx_rates_to_usd", {}).items():
+        fx_dict = raw_data.get("fx_rates_per_usd") or raw_data.get("fx_rates_to_usd", {})
+        for currency_str, rate_str in fx_dict.items():
             self._fx_rates[CurrencyCode(currency_str)] = Decimal(rate_str)
 
         for instance_id, inst_data in raw_data.get("cloud_instances", {}).items():
@@ -44,6 +45,7 @@ class JsonPricingProviderAdapter(PricingProviderPort):
             curr = CurrencyCode(inst_data.get("currency", "USD"))
 
             self._cloud_instances[instance_id] = CloudInstancePricingSpec(
+                instance_id=instance_id,
                 provider_id=inst_data["provider_id"],
                 region=inst_data["region"],
                 instance_type=inst_data["instance_type"],
@@ -86,6 +88,45 @@ class JsonPricingProviderAdapter(PricingProviderPort):
             precision_places=amount.precision_places,
         )
 
+    def _convert_spec(self, instance: CloudInstancePricingSpec, target_currency: CurrencyCode) -> CloudInstancePricingSpec:
+        return CloudInstancePricingSpec(
+            instance_id=instance.instance_id,
+            provider_id=instance.provider_id,
+            region=instance.region,
+            instance_type=instance.instance_type,
+            accelerator_sku=instance.accelerator_sku,
+            accelerators_per_instance=instance.accelerators_per_instance,
+            on_demand_hourly=self.convert_currency(instance.on_demand_hourly, target_currency),
+            reserved_1yr_hourly=self.convert_currency(instance.reserved_1yr_hourly, target_currency),
+            reserved_3yr_hourly=self.convert_currency(instance.reserved_3yr_hourly, target_currency),
+            spot_hourly_mean=self.convert_currency(instance.spot_hourly_mean, target_currency),
+            spot_preemption_probability_daily=instance.spot_preemption_probability_daily,
+            cold_boot_rebuild_seconds=instance.cold_boot_rebuild_seconds,
+            storage_gb_monthly=self.convert_currency(instance.storage_gb_monthly, target_currency),
+            egress_gb_price=self.convert_currency(instance.egress_gb_price, target_currency),
+        )
+
+    def get_cloud_instance_by_id(
+        self,
+        instance_id: str,
+        target_currency: CurrencyCode,
+    ) -> CloudInstancePricingSpec:
+        """Fetches a specific cloud VM instance converted to target currency."""
+        if instance_id not in self._cloud_instances:
+            raise DomainLookupError(f"Cloud instance '{instance_id}' not found in pricing catalog.")
+        return self._convert_spec(self._cloud_instances[instance_id], target_currency)
+
+    def list_all_cloud_instances(
+        self,
+        target_currency: CurrencyCode,
+    ) -> Sequence[CloudInstancePricingSpec]:
+        """Returns all configured cloud VM instances converted to target currency."""
+        return tuple(self._convert_spec(inst, target_currency) for inst in self._cloud_instances.values())
+
+    def get_available_currencies(self) -> Sequence[str]:
+        """Returns all supported ISO-4217 currency codes configured in pricing catalog."""
+        return tuple(str(c) for c in self._fx_rates.keys())
+
     def get_cloud_pricing(
         self,
         sku_id: str,
@@ -97,22 +138,7 @@ class JsonPricingProviderAdapter(PricingProviderPort):
         for instance in self._cloud_instances.values():
             if instance.accelerator_sku.sku_id == sku_id:
                 if region is None or instance.region == region:
-                    converted_spec = CloudInstancePricingSpec(
-                        provider_id=instance.provider_id,
-                        region=instance.region,
-                        instance_type=instance.instance_type,
-                        accelerator_sku=instance.accelerator_sku,
-                        accelerators_per_instance=instance.accelerators_per_instance,
-                        on_demand_hourly=self.convert_currency(instance.on_demand_hourly, target_currency),
-                        reserved_1yr_hourly=self.convert_currency(instance.reserved_1yr_hourly, target_currency),
-                        reserved_3yr_hourly=self.convert_currency(instance.reserved_3yr_hourly, target_currency),
-                        spot_hourly_mean=self.convert_currency(instance.spot_hourly_mean, target_currency),
-                        spot_preemption_probability_daily=instance.spot_preemption_probability_daily,
-                        cold_boot_rebuild_seconds=instance.cold_boot_rebuild_seconds,
-                        storage_gb_monthly=self.convert_currency(instance.storage_gb_monthly, target_currency),
-                        egress_gb_price=self.convert_currency(instance.egress_gb_price, target_currency),
-                    )
-                    matching.append(converted_spec)
+                    matching.append(self._convert_spec(instance, target_currency))
         return tuple(matching)
 
     @property

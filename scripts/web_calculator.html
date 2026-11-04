@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Universal Hybrid LLM FinOps Advisor</title>
+  <title>Universal Hybrid LLM FinOps Advisor Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -60,7 +60,8 @@
       font-weight: 600;
       border: 1px solid rgba(59, 130, 246, 0.3);
     }
-    .top-controls { display: flex; align-items: center; gap: 16px; }
+    .top-controls { display: flex; align-items: center; gap: 12px; }
+    .locale-container { display: flex; gap: 6px; }
     .lang-btn {
       background: var(--bg-surface-elevated);
       color: var(--text-main);
@@ -91,12 +92,13 @@
       body { padding: 12px; }
       .container { gap: 16px; }
       .dashboard-grid { grid-template-columns: 1fr; }
-      .metrics-row { grid-template-columns: 1fr; }
+      .metrics-row { grid-template-columns: 1fr !important; }
       .top-bar { flex-direction: column; gap: 12px; align-items: flex-start; }
       .ledger-footer { flex-direction: column; gap: 12px; align-items: flex-start; }
       .ledger-hash { max-width: 100%; }
       .rec-banner { flex-direction: column; gap: 8px; align-items: flex-start; }
       .actuarial-row { flex-direction: column !important; gap: 8px; }
+      .two-col-grid { grid-template-columns: 1fr !important; }
     }
 
     .card {
@@ -114,9 +116,6 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
-    }
-    @media (max-width: 768px) {
-      .two-col-grid { grid-template-columns: 1fr; }
     }
     .card-title {
       font-size: 1.1rem;
@@ -137,7 +136,7 @@
       max-width: 100%;
     }
     .question-label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
-    .option-select {
+    .option-select, .text-input {
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
       color: var(--text-main);
@@ -151,7 +150,7 @@
       white-space: nowrap;
       overflow: hidden;
     }
-    .option-select:focus { outline: none; border-color: var(--border-focus); }
+    .option-select:focus, .text-input:focus { outline: none; border-color: var(--border-focus); }
 
     /* Recommendation Banner */
     .rec-banner {
@@ -235,14 +234,13 @@
       <div class="brand-title">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         <div>
-          <h1 id="lbl-title">Universal Hybrid FinOps Advisor</h1>
-          <p style="font-size: 0.75rem; color: var(--text-muted);" id="lbl-subtitle">Deterministic Roofline Physics, Open FAIR Risk & GAAP/IFRS TCO</p>
+          <h1 id="lbl-title">Universal Hybrid FinOps Advisor Platform</h1>
+          <p style="font-size: 0.75rem; color: var(--text-muted);" id="lbl-subtitle">Deterministic Roofline Sizing, Open FAIR Risk Modeling & GAAP/IFRS TCO</p>
         </div>
       </div>
       <div class="top-controls">
         <span class="brand-badge" id="lbl-tier1">TIER-1 CORE</span>
-        <button class="lang-btn active" id="btn-en" onclick="setLocale('en')">EN</button>
-        <button class="lang-btn" id="btn-es" onclick="setLocale('es')">ES</button>
+        <div class="locale-container" id="locale-buttons"></div>
       </div>
     </header>
 
@@ -252,12 +250,22 @@
       <section class="card">
         <div class="card-title">
           <span id="lbl-guided-wizard">1. Guided Strategic Assessment</span>
-          <span class="brand-badge">5 DIMENSIONS</span>
+          <span class="brand-badge" id="lbl-dimensions-badge">5 DIMENSIONS</span>
         </div>
 
-        <div id="questions-container" style="display: flex; flex-direction: column; gap: 16px;">
-          <!-- Questions will hydrate dynamically from /api/questionnaire -->
+        <!-- Vertical & Currency Pickers -->
+        <div class="two-col-grid">
+          <div class="question-item">
+            <label class="question-label" id="lbl-vertical">Industry Vertical</label>
+            <select class="option-select" id="sel-vertical" onchange="onVerticalChange()"></select>
+          </div>
+          <div class="question-item">
+            <label class="question-label" id="lbl-currency">Target Currency</label>
+            <select class="option-select" id="sel-currency" onchange="runSimulation()"></select>
+          </div>
         </div>
+
+        <div id="questions-container" style="display: flex; flex-direction: column; gap: 16px;"></div>
 
         <!-- Dynamic Recommendation -->
         <div class="rec-banner" id="rec-banner">
@@ -271,21 +279,41 @@
         <!-- Hardware & Topology Pickers -->
         <div class="two-col-grid">
           <div class="question-item">
-            <label class="question-label" id="lbl-model">Target Model</label>
-            <select class="option-select" id="sel-model" onchange="runSimulation()">
-              <option value="LLAMA_3_70B_INSTRUCT">Meta Llama 3 70B (GQA FP16)</option>
-              <option value="DEEPSEEK_V3_671B_MOE_FP8">DeepSeek V3 671B (MLA FP8)</option>
-              <option value="MISTRAL_7B_INSTRUCT">Mistral 7B (GQA FP16)</option>
-            </select>
+            <label class="question-label" id="lbl-model">Target Model Architecture</label>
+            <select class="option-select" id="sel-model" onchange="runSimulation()"></select>
           </div>
           <div class="question-item">
-            <label class="question-label" id="lbl-chassis">On-Premises Chassis</label>
-            <select class="option-select" id="sel-chassis" onchange="runSimulation()">
-              <option value="SUPERMICRO_SYS_821GE_TNHR_H100">Supermicro 8x H100 SXM5</option>
-              <option value="DELL_POWEREDGE_XE9680_H100">Dell PowerEdge 8x H100 SXM5</option>
-              <option value="SUPERMICRO_SYS_221GE_TNRT_L4">Supermicro 4x L4 PCIe</option>
-              <option value="GIGABYTE_G293_Z43_RTX4090">Gigabyte 4x RTX 4090 24GB</option>
+            <label class="question-label" id="lbl-chassis">On-Premises Server Chassis</label>
+            <select class="option-select" id="sel-chassis" onchange="runSimulation()"></select>
+          </div>
+        </div>
+
+        <!-- Cloud Instance & Traffic Parameters -->
+        <div class="two-col-grid">
+          <div class="question-item">
+            <label class="question-label" id="lbl-cloud-inst">Reference Cloud Instance</label>
+            <select class="option-select" id="sel-cloud" onchange="runSimulation()"></select>
+          </div>
+          <div class="question-item">
+            <label class="question-label" id="lbl-amortization">Amortization Period (Months)</label>
+            <select class="option-select" id="sel-amortization" onchange="runSimulation()">
+              <option value="12">12 Months (1 Year)</option>
+              <option value="24">24 Months (2 Years)</option>
+              <option value="36" selected>36 Months (3 Years)</option>
+              <option value="48">48 Months (4 Years)</option>
+              <option value="60">60 Months (5 Years)</option>
             </select>
+          </div>
+        </div>
+
+        <div class="two-col-grid">
+          <div class="question-item">
+            <label class="question-label" id="lbl-users">Concurrent Users</label>
+            <input type="number" class="text-input" id="inp-users" value="32" min="1" max="1000" onchange="runSimulation()">
+          </div>
+          <div class="question-item">
+            <label class="question-label" id="lbl-ctx">Max Context Length</label>
+            <input type="number" class="text-input" id="inp-ctx" value="8192" min="1024" max="65536" step="1024" onchange="runSimulation()">
           </div>
         </div>
       </section>
@@ -320,43 +348,43 @@
 
         <!-- Side-by-Side Comparison Table -->
         <div class="table-wrapper">
-        <table class="tco-table">
-          <thead>
-            <tr>
-              <th id="lbl-regime">Deployment Regime</th>
-              <th id="lbl-monthly-cost">Monthly Nominal TCO</th>
-              <th id="lbl-actuarial-reserve">Actuarial Loss (ALE/12)</th>
-              <th id="lbl-effective-tco">Risk-Adjusted Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr id="row-onprem" class="highlight">
-              <td style="font-weight: 700;">🏛️ On-Premises Sovereign</td>
-              <td id="tco-onprem-nom">$7,420.00</td>
-              <td id="tco-onprem-ale">$41.67</td>
-              <td id="tco-onprem-total" style="font-weight: 700; color: var(--accent-emerald);">$7,461.67</td>
-            </tr>
-            <tr id="row-cloud">
-              <td style="font-weight: 700;">☁️ Elastic Cloud (GCP/AWS)</td>
-              <td id="tco-cloud-nom">$14,880.00</td>
-              <td id="tco-cloud-ale">$68.50</td>
-              <td id="tco-cloud-total">$14,948.50</td>
-            </tr>
-            <tr id="row-hybrid">
-              <td style="font-weight: 700;">⚡ Tiered Hybrid Bursting</td>
-              <td id="tco-hybrid-nom">$8,912.00</td>
-              <td id="tco-hybrid-ale">$47.03</td>
-              <td id="tco-hybrid-total">$8,959.03</td>
-            </tr>
-          </tbody>
-        </table>
+          <table class="tco-table">
+            <thead>
+              <tr>
+                <th id="lbl-regime">Deployment Regime</th>
+                <th id="lbl-monthly-cost">Monthly Nominal TCO</th>
+                <th id="lbl-actuarial-reserve">Actuarial Loss (ALE/12)</th>
+                <th id="lbl-effective-tco">Risk-Adjusted Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="row-onprem" class="highlight">
+                <td style="font-weight: 700;" id="lbl-onprem-row">🏛️ On-Premises Sovereign</td>
+                <td id="tco-onprem-nom">$0.00</td>
+                <td id="tco-onprem-ale">$0.00</td>
+                <td id="tco-onprem-total" style="font-weight: 700; color: var(--accent-emerald);">$0.00</td>
+              </tr>
+              <tr id="row-cloud">
+                <td style="font-weight: 700;" id="lbl-cloud-row">☁️ Elastic Public Cloud</td>
+                <td id="tco-cloud-nom">$0.00</td>
+                <td id="tco-cloud-ale">$0.00</td>
+                <td id="tco-cloud-total">$0.00</td>
+              </tr>
+              <tr id="row-hybrid">
+                <td style="font-weight: 700;" id="lbl-hybrid-row">⚡ Tiered Hybrid Bursting</td>
+                <td id="tco-hybrid-nom">$0.00</td>
+                <td id="tco-hybrid-ale">$0.00</td>
+                <td id="tco-hybrid-total">$0.00</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <!-- Actuarial Breakdown -->
         <div class="actuarial-row" style="background: var(--bg-surface-elevated); padding: 14px 18px; border-radius: var(--radius-md); display: flex; justify-content: space-between; font-size: 0.85rem; font-family: var(--font-mono);">
           <div>
-            <span style="color: var(--text-muted);" id="lbl-afr">Silicon AFR:</span>
-            <span style="color: #FFF; font-weight: 700;" id="val-afr">2.5%</span>
+            <span style="color: var(--text-muted);" id="lbl-afr">Cluster Annual LEF:</span>
+            <span style="color: #FFF; font-weight: 700;" id="val-afr">20.0%</span>
           </div>
           <div>
             <span style="color: var(--text-muted);" id="lbl-mtbf">Expected MTBF:</span>
@@ -383,18 +411,117 @@
   <script>
     let currentLocale = 'en';
     let translations = {};
+    let catalog = {};
     let clientResponses = {};
+
+    function formatCurrency(amount, currencyCode) {
+      try {
+        return new Intl.NumberFormat(currentLocale, {
+          style: 'currency',
+          currency: currencyCode || 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(amount);
+      } catch (e) {
+        return `${currencyCode} ${parseFloat(amount).toFixed(2)}`;
+      }
+    }
 
     async function init() {
       const res = await fetch('/api/catalog');
-      const data = await res.json();
-      translations = data.translations;
+      catalog = await res.json();
+      translations = catalog.translations;
+
+      renderLocaleButtons();
+      renderCatalogSelectors();
+      await loadQuestionnaire();
+      await runSimulation();
+    }
+
+    function renderLocaleButtons() {
+      const container = document.getElementById('locale-buttons');
+      container.innerHTML = '';
+      const locales = Object.keys(translations);
+      locales.forEach(loc => {
+        const btn = document.createElement('button');
+        btn.id = `btn-${loc}`;
+        btn.className = `lang-btn ${loc === currentLocale ? 'active' : ''}`;
+        btn.innerText = loc.toUpperCase();
+        btn.onclick = () => setLocale(loc);
+        container.appendChild(btn);
+      });
+    }
+
+    function renderCatalogSelectors() {
+      // 1. Verticals
+      const vertSelect = document.getElementById('sel-vertical');
+      vertSelect.innerHTML = '';
+      const vertKeys = Object.keys(catalog.verticals);
+      vertKeys.forEach(vKey => {
+        const opt = document.createElement('option');
+        opt.value = vKey;
+        opt.innerText = getI18n(catalog.verticals[vKey].i18n_key, vKey);
+        vertSelect.appendChild(opt);
+      });
+      vertSelect.value = vertKeys[0];
+
+      // 2. Currencies
+      const currSelect = document.getElementById('sel-currency');
+      currSelect.innerHTML = '';
+      const currencies = catalog.currencies || ['USD', 'EUR', 'GBP', 'CHF', 'JPY'];
+      currencies.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.innerText = c;
+        currSelect.appendChild(opt);
+      });
+      const initialCurr = catalog.verticals[vertKeys[0]].default_target_currency || 'USD';
+      currSelect.value = initialCurr;
+
+      // 3. Models
+      const modelSelect = document.getElementById('sel-model');
+      modelSelect.innerHTML = '';
+      catalog.models.forEach(mKey => {
+        const opt = document.createElement('option');
+        opt.value = mKey;
+        opt.innerText = mKey;
+        modelSelect.appendChild(opt);
+      });
+      modelSelect.value = catalog.models.includes('LLAMA_3_70B_INSTRUCT') ? 'LLAMA_3_70B_INSTRUCT' : catalog.models[0];
+
+      // 4. Chassis
+      const chassisSelect = document.getElementById('sel-chassis');
+      chassisSelect.innerHTML = '';
+      catalog.chassis.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.chassis_id;
+        opt.innerText = `${c.model_name} (${c.accelerators})`;
+        chassisSelect.appendChild(opt);
+      });
+
+      // 5. Cloud Instances
+      const cloudSelect = document.getElementById('sel-cloud');
+      cloudSelect.innerHTML = '';
+      catalog.cloud_instances.forEach(ci => {
+        const opt = document.createElement('option');
+        opt.value = ci.instance_id;
+        opt.innerText = `${ci.provider} ${ci.type} (${ci.accelerator_sku_id})`;
+        cloudSelect.appendChild(opt);
+      });
+    }
+
+    async function onVerticalChange() {
+      const vertId = document.getElementById('sel-vertical').value;
+      if (catalog.verticals[vertId] && catalog.verticals[vertId].default_target_currency) {
+        document.getElementById('sel-currency').value = catalog.verticals[vertId].default_target_currency;
+      }
       await loadQuestionnaire();
       await runSimulation();
     }
 
     async function loadQuestionnaire() {
-      const res = await fetch(`/api/questionnaire?vertical=BANKING_FINANCE&locale=${currentLocale}`);
+      const verticalId = document.getElementById('sel-vertical').value || Object.keys(catalog.verticals)[0];
+      const res = await fetch(`/api/questionnaire?vertical_id=${verticalId}&locale=${currentLocale}`);
       const data = await res.json();
       const container = document.getElementById('questions-container');
       container.innerHTML = '';
@@ -419,7 +546,6 @@
           select.appendChild(optElem);
         });
 
-        // Default response
         clientResponses[q.question_id] = q.options[0].option_id;
 
         item.appendChild(label);
@@ -444,87 +570,141 @@
     }
 
     async function runSimulation() {
+      const verticalId = document.getElementById('sel-vertical').value || Object.keys(catalog.verticals)[0];
+      const currency = document.getElementById('sel-currency').value || 'USD';
       const modelId = document.getElementById('sel-model').value;
       const chassisId = document.getElementById('sel-chassis').value;
+      const cloudId = document.getElementById('sel-cloud').value || catalog.cloud_instances[0].instance_id;
+      const amortMonths = parseInt(document.getElementById('sel-amortization').value || '36', 10);
+      const users = parseInt(document.getElementById('inp-users').value || '32', 10);
+      const ctx = parseInt(document.getElementById('inp-ctx').value || '8192', 10);
 
       const payload = {
-        vertical_id: 'BANKING_FINANCE',
+        vertical_id: verticalId,
         client_responses: clientResponses,
         model_id: modelId,
         on_prem_chassis_id: chassisId,
-        cloud_instance_id: 'gcp-a3-highgpu-8g-h100x8',
-        amortization_months: 36,
-        currency: 'USD',
-        pue_rating: 1.25,
-        electricity_kwh_rate: 0.16,
-        colocation_rack_fee: 1500.0,
+        cloud_instance_id: cloudId,
+        amortization_months: amortMonths,
+        currency: currency,
+        pue_rating: "1.2500",
+        electricity_kwh_rate: "0.1600",
+        colocation_rack_fee: "1500.00",
         cooling_type: 'AIR_COOLED',
-        concurrent_users: 32,
-        max_context_length: 8192,
+        concurrent_users: users,
+        max_context_length: ctx,
         prompt_tokens: 2048,
         output_tokens: 256,
-        baseline_rps: 4.0,
-        peak_burst_rps: 8.0,
+        baseline_rps: "4.0000",
+        peak_burst_rps: "8.0000",
         chassis_per_rack: 1
       };
 
-      const res = await fetch('/api/simulate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
+      try {
+        const res = await fetch('/api/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-      // Update UI
-      document.getElementById('rec-archetype-val').innerText = data.recommendation.archetype;
-      document.getElementById('rec-scores-val').innerText = `On-Prem: ${data.recommendation.on_prem_score} | Cloud: ${data.recommendation.cloud_score}`;
+        if (!res.ok) {
+          const err = await res.json();
+          const badge = document.getElementById('gate-badge');
+          badge.className = 'status-badge warn';
+          badge.innerText = `ERROR: ${err.error_type || 'Simulation Failed'}`;
+          console.error("Simulation error response:", err);
+          return;
+        }
 
-      document.getElementById('val-nodes').innerText = `${data.on_prem_roofline.required_nodes} Node${data.on_prem_roofline.required_nodes > 1 ? 's' : ''}`;
-      document.getElementById('val-gpus').innerText = `${data.on_prem_roofline.total_gpus}x GPUs (TP=${data.on_prem_roofline.tensor_parallel_degree})`;
-      document.getElementById('val-tpot').innerText = `${data.on_prem_roofline.tpot_ms} ms`;
-      document.getElementById('val-toks').innerText = `${data.on_prem_roofline.tokens_per_second_per_user} tok/s/user`;
-      document.getElementById('val-mbu').innerText = `${(parseFloat(data.on_prem_roofline.memory_bus_utilization_ratio) * 100).toFixed(1)}%`;
-      document.getElementById('val-vram').innerText = `VRAM: ${(parseFloat(data.on_prem_roofline.vram_utilization_ratio) * 100).toFixed(1)}%`;
+        const data = await res.json();
 
-      document.getElementById('tco-onprem-nom').innerText = `$${parseFloat(data.tco_comparison.on_prem_monthly).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-      document.getElementById('tco-onprem-ale').innerText = `$${parseFloat(data.actuarial_risk.on_prem.monthly_reserve).toFixed(2)}`;
-      document.getElementById('tco-onprem-total').innerText = `$${parseFloat(data.actuarial_risk.on_prem.risk_adjusted_tco).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        // Update UI
+        document.getElementById('rec-archetype-val').innerText = data.recommendation.archetype;
+        document.getElementById('rec-scores-val').innerText = `${getI18n('ui.on_prem_prefix', 'On-Prem:')} ${data.recommendation.on_prem_score} | ${getI18n('ui.cloud_prefix', 'Cloud:')} ${data.recommendation.cloud_score}`;
 
-      document.getElementById('tco-cloud-nom').innerText = `$${parseFloat(data.tco_comparison.cloud_monthly).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-      document.getElementById('tco-cloud-ale').innerText = `$${parseFloat(data.actuarial_risk.cloud_spot.monthly_reserve).toFixed(2)}`;
-      document.getElementById('tco-cloud-total').innerText = `$${parseFloat(data.actuarial_risk.cloud_spot.risk_adjusted_tco).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        const nodeUnit = data.on_prem_roofline.required_nodes > 1 ? getI18n('ui.nodes_unit', 'Nodes') : getI18n('ui.node_unit', 'Node');
+        document.getElementById('val-nodes').innerText = `${data.on_prem_roofline.required_nodes} ${nodeUnit}`;
+        document.getElementById('val-gpus').innerText = `${data.on_prem_roofline.total_gpus}x GPUs (TP=${data.on_prem_roofline.tensor_parallel_degree})`;
+        document.getElementById('val-tpot').innerText = `${data.on_prem_roofline.tpot_ms} ms`;
+        document.getElementById('val-toks').innerText = `${data.on_prem_roofline.tokens_per_second_per_user} ${getI18n('ui.toks_per_user', 'tok/s/user')}`;
+        document.getElementById('val-mbu').innerText = `${(parseFloat(data.on_prem_roofline.memory_bus_utilization_ratio) * 100).toFixed(1)}%`;
+        document.getElementById('val-vram').innerText = `${getI18n('ui.vram_prefix', 'VRAM:')} ${(parseFloat(data.on_prem_roofline.vram_utilization_ratio) * 100).toFixed(1)}%`;
 
-      document.getElementById('tco-hybrid-nom').innerText = `$${parseFloat(data.tco_comparison.hybrid_monthly).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-      document.getElementById('tco-hybrid-total').innerText = `$${parseFloat(data.tco_comparison.hybrid_monthly).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        document.getElementById('tco-onprem-nom').innerText = formatCurrency(data.tco_comparison.on_prem_monthly, currency);
+        document.getElementById('tco-onprem-ale').innerText = formatCurrency(data.actuarial_risk.on_prem.monthly_reserve, currency);
+        document.getElementById('tco-onprem-total').innerText = formatCurrency(data.tco_comparison.on_prem_risk_adjusted, currency);
 
-      document.getElementById('val-mtbf').innerText = `${parseFloat(data.actuarial_risk.on_prem.mtbf_hours).toLocaleString()} hrs`;
-      document.getElementById('ledger-hash-val').innerText = data.entry_hash;
+        document.getElementById('tco-cloud-nom').innerText = formatCurrency(data.tco_comparison.cloud_monthly, currency);
+        document.getElementById('tco-cloud-ale').innerText = formatCurrency(data.actuarial_risk.cloud_spot.monthly_reserve, currency);
+        document.getElementById('tco-cloud-total').innerText = formatCurrency(data.tco_comparison.cloud_risk_adjusted, currency);
 
-      const badge = document.getElementById('gate-badge');
-      if (data.constitutional_gate.is_certified) {
-        badge.className = 'status-badge pass';
-        badge.innerText = 'CFO GATE: CERTIFIED';
-      } else {
-        badge.className = 'status-badge warn';
-        badge.innerText = `CFO GATE: ${data.constitutional_gate.violations.length} VIOLATIONS`;
+        document.getElementById('tco-hybrid-nom').innerText = formatCurrency(data.tco_comparison.hybrid_monthly, currency);
+        document.getElementById('tco-hybrid-ale').innerText = formatCurrency(data.actuarial_risk.hybrid.monthly_reserve, currency);
+        document.getElementById('tco-hybrid-total').innerText = formatCurrency(data.tco_comparison.hybrid_risk_adjusted, currency);
+
+        document.getElementById('val-afr').innerText = `${(parseFloat(data.actuarial_risk.on_prem.annual_lef) * 100).toFixed(1)}%`;
+        document.getElementById('val-mtbf').innerText = `${parseFloat(data.actuarial_risk.on_prem.mtbf_hours).toLocaleString()} ${getI18n('ui.hrs_unit', 'hrs')}`;
+        document.getElementById('val-mttr').innerText = `${parseFloat(data.actuarial_risk.on_prem.recovery_mttr_hours).toFixed(2)} ${getI18n('ui.hrs_unit', 'hrs')}`;
+        document.getElementById('ledger-hash-val').innerText = data.entry_hash;
+
+        const badge = document.getElementById('gate-badge');
+        if (data.constitutional_gate.is_certified) {
+          badge.className = 'status-badge pass';
+          badge.innerText = getI18n('ui.cfo_certified', 'CFO GATE: CERTIFIED');
+        } else {
+          badge.className = 'status-badge warn';
+          badge.innerText = `${getI18n('ui.cfo_violations', 'CFO GATE: VIOLATIONS')}: ${data.constitutional_gate.violations.length}`;
+        }
+      } catch (err) {
+        console.error("Fetch simulation network error:", err);
       }
     }
 
     async function verifyLedger() {
       const res = await fetch('/api/ledger/verify');
       const data = await res.json();
-      alert(`Cryptographic Audit Ledger Verification: ${data.status} (Valid Chain: ${data.is_valid})`);
+      alert(`${getI18n('ui.ledger_alert', 'Cryptographic Audit Ledger Verification:')} ${data.status} (${getI18n('ui.valid_chain', 'Valid Chain:')} ${data.is_valid})`);
     }
 
     function setLocale(loc) {
       currentLocale = loc;
-      document.getElementById('btn-en').className = `lang-btn ${loc === 'en' ? 'active' : ''}`;
-      document.getElementById('btn-es').className = `lang-btn ${loc === 'es' ? 'active' : ''}`;
+      renderLocaleButtons();
 
-      document.getElementById('lbl-title').innerText = getI18n('app.header.title', 'Universal Hybrid FinOps Advisor');
-      document.getElementById('lbl-subtitle').innerText = getI18n('app.header.subtitle', 'Deterministic Roofline Physics, Open FAIR Risk & GAAP/IFRS TCO');
+      // Translate all UI text
+      document.getElementById('lbl-title').innerText = getI18n('app.header.title', 'Universal Hybrid FinOps Advisor Platform');
+      document.getElementById('lbl-subtitle').innerText = getI18n('app.header.subtitle', 'Deterministic Roofline Sizing, Open FAIR Risk Modeling & GAAP/IFRS TCO');
+      document.getElementById('lbl-guided-wizard').innerText = getI18n('ui.guided_assessment', '1. Guided Strategic Assessment');
+      document.getElementById('lbl-dimensions-badge').innerText = getI18n('ui.dimensions_badge', '5 DIMENSIONS');
+      document.getElementById('lbl-target-archetype').innerText = getI18n('ui.target_archetype', 'RECOMMENDED ARCHETYPE');
+      document.getElementById('lbl-vertical').innerText = getI18n('ui.vertical', 'Industry Vertical');
+      document.getElementById('lbl-currency').innerText = getI18n('ui.currency', 'Target Currency');
+      document.getElementById('lbl-model').innerText = getI18n('ui.target_model', 'Target Model Architecture');
+      document.getElementById('lbl-chassis').innerText = getI18n('ui.on_prem_chassis', 'On-Premises Server Chassis');
+      document.getElementById('lbl-synthesis').innerText = getI18n('ui.synthesis', '2. Capacity Sizing & TCO Synthesis');
+      document.getElementById('lbl-nodes').innerText = getI18n('ui.nodes', 'CLUSTER NODES');
+      document.getElementById('lbl-tpot').innerText = getI18n('ui.tpot', 'TPOT LATENCY');
+      document.getElementById('lbl-mbu').innerText = getI18n('ui.mbu', 'MEMORY BUS (HBM)');
+      document.getElementById('lbl-regime').innerText = getI18n('ui.regime', 'Deployment Regime');
+      document.getElementById('lbl-monthly-cost').innerText = getI18n('ui.monthly_cost', 'Monthly Nominal TCO');
+      document.getElementById('lbl-actuarial-reserve').innerText = getI18n('ui.actuarial_reserve', 'Actuarial Loss (ALE/12)');
+      document.getElementById('lbl-effective-tco').innerText = getI18n('ui.effective_tco', 'Risk-Adjusted Total');
+      document.getElementById('lbl-onprem-row').innerText = getI18n('ui.onprem_name', '🏛️ On-Premises Sovereign');
+      document.getElementById('lbl-cloud-row').innerText = getI18n('ui.cloud_name', '☁️ Elastic Public Cloud');
+      document.getElementById('lbl-hybrid-row').innerText = getI18n('ui.hybrid_name', '⚡ Tiered Hybrid Bursting');
+      document.getElementById('lbl-afr').innerText = getI18n('ui.silicon_afr', 'Cluster Annual LEF:');
+      document.getElementById('lbl-mtbf').innerText = getI18n('ui.expected_mtbf', 'Expected MTBF:');
+      document.getElementById('lbl-spare').innerText = getI18n('ui.spare_mttr', 'Hot-Spare MTTR:');
+      document.getElementById('lbl-ledger-seal').innerText = getI18n('ui.ledger_seal', 'CRYPTOGRAPHIC INTEGRITY SEAL (SHA-256):');
+      document.getElementById('lbl-tier1').innerText = getI18n('ui.tier1_core', 'TIER-1 CORE');
+      document.getElementById('lbl-cloud-inst').innerText = getI18n('ui.cloud_instance', 'Reference Cloud Instance');
+      document.getElementById('lbl-amortization').innerText = getI18n('ui.amortization_period', 'Amortization Period (Months)');
+      document.getElementById('lbl-users').innerText = getI18n('ui.concurrent_users', 'Concurrent Users');
+      document.getElementById('lbl-ctx').innerText = getI18n('ui.max_context', 'Max Context Length');
+      document.getElementById('btn-verify-ledger').innerText = getI18n('ui.verify_ledger', 'Verify Audit Ledger');
 
+      renderCatalogSelectors();
       loadQuestionnaire();
+      runSimulation();
     }
 
     window.onload = init;
