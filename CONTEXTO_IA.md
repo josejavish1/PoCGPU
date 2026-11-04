@@ -48,6 +48,11 @@ Queda terminantemente prohibido proponer o implementar las siguientes soluciones
 ├── 06_GUIA_PRACTICA_POC_SATURACION.md  # Procedimiento de emisión de API Keys y pruebas de saturación
 ├── 07_VARIANTE_MINIMO_COSTE_SPOT_MISTRAL.md # Configuración de coste mínimo en GCP Spot con Mistral-7B
 ├── 08_ESTADO_ZURICH_Y_OPERACIONES.md   # Guía operativa: Reactivación, hibernación, credenciales y URLs
+├── 09_MODELO_FINOPS_CALCULADORA.md     # Especificación FinOps: Sizing de hardware, Roofline y chargeback
+├── 10_BACKLOG_FINOPS_INSTITUCIONAL.md  # Backlog técnico Tier-1: Primitivas neurosimbólicas y hoja de ruta
+├── docs/RFC_063_UNIVERSAL_HYBRID_FINOPS_ADVISOR_ARGON.md # Master Blueprint: Universal Hybrid FinOps Advisor (gemini-4-argon)
+├── docs/RFC_064_PHASE2_DOMAIN_SERVICES_SPECIFICATION_ARGON.md # Phase 2 Technical Specification: Pure Domain Services (gemini-4-argon)
+├── docs/RFC_065_ZERO_DEFECT_ZERO_HARDCODING_MASTER_PLAN_ARGON.md # Master Quality Plan: Universal Zero-Defect & Zero-Hardcoding (gemini-4-argon)
 ├── manifests/
 │   ├── 01_gpu_audit.yaml               # Pod temporal para auditar topología P2P y ancho de banda NCCL
 │   ├── 02_storage.yaml                 # PVC genérico y Job preloader de almacenamiento
@@ -64,6 +69,7 @@ Queda terminantemente prohibido proponer o implementar las siguientes soluciones
     ├── benchmark.py                    # Suite asíncrona de pruebas de carga con streaming (httpx)
     ├── classify_incident.py            # Validador de inferencia de incidentes con adaptador LoRA
     ├── enrich_enterprise_metrics.py    # Inyector de tráfico sintético para métricas en Grafana
+    ├── finops_tier1_engine.py          # Motor FinOps Tier-1: Planificador de capacidad, Roofline y TCO
     ├── ide_copilot_simulator.py        # Simulador de peticiones concurrentes de IDE Continue.dev
     ├── interactive_chat.py             # Cliente CLI interactivo con métricas de streaming y TTFT
     ├── saturation_probe.py             # Sonda de saturación extrema de KV Cache y PagedAttention

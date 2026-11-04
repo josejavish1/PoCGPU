@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal Hybrid LLM FinOps Advisor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #0B0F19;
+      --bg-surface: #111827;
+      --bg-surface-elevated: #1F2937;
+      --border-subtle: #374151;
+      --border-focus: #3B82F6;
+      --text-main: #F9FAFB;
+      --text-muted: #9CA3AF;
+      --brand-primary: #3B82F6;
+      --brand-primary-hover: #2563EB;
+      --accent-cyan: #06B6D4;
+      --accent-emerald: #10B981;
+      --accent-amber: #F59E0B;
+      --accent-rose: #EF4444;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    .container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+    
+    /* Top Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-surface);
+      padding: 16px 24px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+    }
+    .brand-title { display: flex; align-items: center; gap: 12px; }
+    .brand-title h1 { font-size: 1.25rem; font-weight: 700; color: #FFF; }
+    .brand-badge {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--brand-primary);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .top-controls { display: flex; align-items: center; gap: 16px; }
+    .lang-btn {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .lang-btn.active {
+      background: var(--brand-primary);
+      border-color: var(--brand-primary);
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 24px;
+    }
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      .container { gap: 16px; }
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .metrics-row { grid-template-columns: 1fr; }
+      .top-bar { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .ledger-footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .ledger-hash { max-width: 100%; }
+      .rec-banner { flex-direction: column; gap: 8px; align-items: flex-start; }
+      .actuarial-row { flex-direction: column !important; gap: 8px; }
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-width: 0;
+      max-width: 100%;
+    }
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 768px) {
+      .two-col-grid { grid-template-columns: 1fr; }
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    /* Questionnaire Questions */
+    .question-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+      max-width: 100%;
+    }
+    .question-label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+    .option-select {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      cursor: pointer;
+      width: 100%;
+      max-width: 100%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .option-select:focus { outline: none; border-color: var(--border-focus); }
+
+    /* Recommendation Banner */
+    .rec-banner {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .rec-archetype { font-size: 1.15rem; font-weight: 700; color: var(--accent-emerald); }
+    .rec-scores { font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Metric Cards */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .metric-box {
+      background: var(--bg-surface-elevated);
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .metric-name { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+    .metric-val { font-size: 1.3rem; font-weight: 700; font-family: var(--font-mono); color: #FFF; }
+    .metric-unit { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* Comparison Table */
+    .tco-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .tco-table th, .tco-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .tco-table th { color: var(--text-muted); font-weight: 600; font-size: 0.8rem; }
+    .tco-table td { font-family: var(--font-mono); }
+    .tco-table tr.highlight { background: rgba(59, 130, 246, 0.08); font-weight: 700; color: var(--accent-cyan); }
+
+    /* Gate Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+    .status-badge.pass { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-badge.warn { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+    
+    .ledger-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+    .ledger-hash { color: var(--accent-cyan); word-break: break-all; max-width: 600px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="brand-title">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <div>
+          <h1 id="lbl-title">Universal Hybrid FinOps Advisor</h1>
+          <p style="font-size: 0.75rem; color: var(--text-muted);" id="lbl-subtitle">Deterministic Roofline Physics, Open FAIR Risk & GAAP/IFRS TCO</p>
+        </div>
+      </div>
+      <div class="top-controls">
+        <span class="brand-badge" id="lbl-tier1">TIER-1 CORE</span>
+        <button class="lang-btn active" id="btn-en" onclick="setLocale('en')">EN</button>
+        <button class="lang-btn" id="btn-es" onclick="setLocale('es')">ES</button>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="dashboard-grid">
+      <!-- Left Column: Guided Assessment Wizard -->
+      <section class="card">
+        <div class="card-title">
+          <span id="lbl-guided-wizard">1. Guided Strategic Assessment</span>
+          <span class="brand-badge">5 DIMENSIONS</span>
+        </div>
+
+        <div id="questions-container" style="display: flex; flex-direction: column; gap: 16px;">
+          <!-- Questions will hydrate dynamically from /api/questionnaire -->
+        </div>
+
+        <!-- Dynamic Recommendation -->
+        <div class="rec-banner" id="rec-banner">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);" id="lbl-target-archetype">RECOMMENDED ARCHETYPE</div>
+            <div class="rec-archetype" id="rec-archetype-val">SOVEREIGN_ON_PREM</div>
+          </div>
+          <div class="rec-scores" id="rec-scores-val">On-Prem: 85.0 | Cloud: 32.5</div>
+        </div>
+
+        <!-- Hardware & Topology Pickers -->
+        <div class="two-col-grid">
+          <div class="question-item">
+            <label class="question-label" id="lbl-model">Target Model</label>
+            <select class="option-select" id="sel-model" onchange="runSimulation()">
+              <option value="LLAMA_3_70B_INSTRUCT">Meta Llama 3 70B (GQA FP16)</option>
+              <option value="DEEPSEEK_V3_671B_MOE_FP8">DeepSeek V3 671B (MLA FP8)</option>
+              <option value="MISTRAL_7B_INSTRUCT">Mistral 7B (GQA FP16)</option>
+            </select>
+          </div>
+          <div class="question-item">
+            <label class="question-label" id="lbl-chassis">On-Premises Chassis</label>
+            <select class="option-select" id="sel-chassis" onchange="runSimulation()">
+              <option value="SUPERMICRO_SYS_821GE_TNHR_H100">Supermicro 8x H100 SXM5</option>
+              <option value="DELL_POWEREDGE_XE9680_H100">Dell PowerEdge 8x H100 SXM5</option>
+              <option value="SUPERMICRO_SYS_221GE_TNRT_L4">Supermicro 4x L4 PCIe</option>
+              <option value="GIGABYTE_G293_Z43_RTX4090">Gigabyte 4x RTX 4090 24GB</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Sizing, Risk & TCO Synthesis -->
+      <section class="card">
+        <div class="card-title">
+          <span id="lbl-synthesis">2. Capacity Sizing & TCO Synthesis</span>
+          <div id="gate-badge-container">
+            <span class="status-badge pass" id="gate-badge">CFO GATE: CERTIFIED</span>
+          </div>
+        </div>
+
+        <!-- Physical Metrics -->
+        <div class="metrics-row">
+          <div class="metric-box">
+            <div class="metric-name" id="lbl-nodes">CLUSTER NODES</div>
+            <div class="metric-val" id="val-nodes">1 Node</div>
+            <div class="metric-unit" id="val-gpus">8x H100 (640GB)</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-name" id="lbl-tpot">TPOT LATENCY</div>
+            <div class="metric-val" id="val-tpot">8.6 ms</div>
+            <div class="metric-unit" id="val-toks">116.0 tok/s/user</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-name" id="lbl-mbu">MEMORY BUS (HBM)</div>
+            <div class="metric-val" id="val-mbu">41.7%</div>
+            <div class="metric-unit" id="val-vram">VRAM: 23.1%</div>
+          </div>
+        </div>
+
+        <!-- Side-by-Side Comparison Table -->
+        <div class="table-wrapper">
+        <table class="tco-table">
+          <thead>
+            <tr>
+              <th id="lbl-regime">Deployment Regime</th>
+              <th id="lbl-monthly-cost">Monthly Nominal TCO</th>
+              <th id="lbl-actuarial-reserve">Actuarial Loss (ALE/12)</th>
+              <th id="lbl-effective-tco">Risk-Adjusted Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="row-onprem" class="highlight">
+              <td style="font-weight: 700;">🏛️ On-Premises Sovereign</td>
+              <td id="tco-onprem-nom">$7,420.00</td>
+              <td id="tco-onprem-ale">$41.67</td>
+              <td id="tco-onprem-total" style="font-weight: 700; color: var(--accent-emerald);">$7,461.67</td>
+            </tr>
+            <tr id="row-cloud">
+              <td style="font-weight: 700;">☁️ Elastic Cloud (GCP/AWS)</td>
+              <td id="tco-cloud-nom">$14,880.00</td>
+              <td id="tco-cloud-ale">$68.50</td>
+              <td id="tco-cloud-total">$14,948.50</td>
+            </tr>
+            <tr id="row-hybrid">
+              <td style="font-weight: 700;">⚡ Tiered Hybrid Bursting</td>
+              <td id="tco-hybrid-nom">$8,912.00</td>
+              <td id="tco-hybrid-ale">$47.03</td>
+              <td id="tco-hybrid-total">$8,959.03</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+
+        <!-- Actuarial Breakdown -->
+        <div class="actuarial-row" style="background: var(--bg-surface-elevated); padding: 14px 18px; border-radius: var(--radius-md); display: flex; justify-content: space-between; font-size: 0.85rem; font-family: var(--font-mono);">
+          <div>
+            <span style="color: var(--text-muted);" id="lbl-afr">Silicon AFR:</span>
+            <span style="color: #FFF; font-weight: 700;" id="val-afr">2.5%</span>
+          </div>
+          <div>
+            <span style="color: var(--text-muted);" id="lbl-mtbf">Expected MTBF:</span>
+            <span style="color: #FFF; font-weight: 700;" id="val-mtbf">4,380 hrs</span>
+          </div>
+          <div>
+            <span style="color: var(--text-muted);" id="lbl-spare">Hot-Spare MTTR:</span>
+            <span style="color: var(--accent-emerald); font-weight: 700;" id="val-mttr">0.25 hrs (15m)</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Cryptographic Ledger Seal Footer -->
+    <footer class="ledger-footer">
+      <div>
+        <span style="color: var(--text-muted);" id="lbl-ledger-seal">CRYPTOGRAPHIC INTEGRITY SEAL (SHA-256):</span>
+        <div class="ledger-hash" id="ledger-hash-val">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</div>
+      </div>
+      <button class="lang-btn" onclick="verifyLedger()" id="btn-verify-ledger">Verify Audit Ledger</button>
+    </footer>
+  </div>
+
+  <script>
+    let currentLocale = 'en';
+    let translations = {};
+    let clientResponses = {};
+
+    async function init() {
+      const res = await fetch('/api/catalog');
+      const data = await res.json();
+      translations = data.translations;
+      await loadQuestionnaire();
+      await runSimulation();
+    }
+
+    async function loadQuestionnaire() {
+      const res = await fetch(`/api/questionnaire?vertical=BANKING_FINANCE&locale=${currentLocale}`);
+      const data = await res.json();
+      const container = document.getElementById('questions-container');
+      container.innerHTML = '';
+
+      data.questions.forEach((q, idx) => {
+        const item = document.createElement('div');
+        item.className = 'question-item';
+
+        const label = document.createElement('label');
+        label.className = 'question-label';
+        label.innerText = `${idx + 1}. ${getI18n(q.i18n_prompt_key, q.dimension_name)}`;
+
+        const select = document.createElement('select');
+        select.className = 'option-select';
+        select.id = `q-${q.question_id}`;
+        select.onchange = onResponseChange;
+
+        q.options.forEach(opt => {
+          const optElem = document.createElement('option');
+          optElem.value = opt.option_id;
+          optElem.innerText = getI18n(opt.i18n_label_key, opt.option_id);
+          select.appendChild(optElem);
+        });
+
+        // Default response
+        clientResponses[q.question_id] = q.options[0].option_id;
+
+        item.appendChild(label);
+        item.appendChild(select);
+        container.appendChild(item);
+      });
+    }
+
+    function getI18n(key, fallback) {
+      if (translations[currentLocale] && translations[currentLocale][key]) {
+        return translations[currentLocale][key];
+      }
+      return fallback;
+    }
+
+    async function onResponseChange() {
+      document.querySelectorAll('#questions-container select').forEach(sel => {
+        const qId = sel.id.replace('q-', '');
+        clientResponses[qId] = sel.value;
+      });
+      await runSimulation();
+    }
+
+    async function runSimulation() {
+      const modelId = document.getElementById('sel-model').value;
+      const chassisId = document.getElementById('sel-chassis').value;
+
+      const payload = {
+        vertical_id: 'BANKING_FINANCE',
+        client_responses: clientResponses,
+        model_id: modelId,
+        on_prem_chassis_id: chassisId,
+        cloud_instance_id: 'gcp-a3-highgpu-8g-h100x8',
+        amortization_months: 36,
+        currency: 'USD',
+        pue_rating: 1.25,
+        electricity_kwh_rate: 0.16,
+        colocation_rack_fee: 1500.0,
+        cooling_type: 'AIR_COOLED',
+        concurrent_users: 32,
+        max_context_length: 8192,
+        prompt_tokens: 2048,
+        output_tokens: 256,
+        baseline_rps: 4.0,
+        peak_burst_rps: 8.0,
+        chassis_per_rack: 1
+      };
+
+      const res = await fetch('/api/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      // Update UI
+      document.getElementById('rec-archetype-val').innerText = data.recommendation.archetype;
+      document.getElementById('rec-scores-val').innerText = `On-Prem: ${data.recommendation.on_prem_score} | Cloud: ${data.recommendation.cloud_score}`;
+
+      document.getElementById('val-nodes').innerText = `${data.on_prem_roofline.required_nodes} Node${data.on_prem_roofline.required_nodes > 1 ? 's' : ''}`;
+      document.getElementById('val-gpus').innerText = `${data.on_prem_roofline.total_gpus}x GPUs (TP=${data.on_prem_roofline.tensor_parallel_degree})`;
+      document.getElementById('val-tpot').innerText = `${data.on_prem_roofline.tpot_ms} ms`;
+      document.getElementById('val-toks').innerText = `${data.on_prem_roofline.tokens_per_second_per_user} tok/s/user`;
+      document.getElementById('val-mbu').innerText = `${(parseFloat(data.on_prem_roofline.memory_bus_utilization_ratio) * 100).toFixed(1)}%`;
+      document.getElementById('val-vram').innerText = `VRAM: ${(parseFloat(data.on_prem_roofline.vram_utilization_ratio) * 100).toFixed(1)}%`;
+
+      document.getElementById('tco-onprem-nom').innerText = `$${parseFloat(data.tco_comparison.on_prem_monthly).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+      document.getElementById('tco-onprem-ale').innerText = `$${parseFloat(data.actuarial_risk.on_prem.monthly_reserve).toFixed(2)}`;
+      document.getElementById('tco-onprem-total').innerText = `$${parseFloat(data.actuarial_risk.on_prem.risk_adjusted_tco).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+
+      document.getElementById('tco-cloud-nom').innerText = `$${parseFloat(data.tco_comparison.cloud_monthly).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+      document.getElementById('tco-cloud-ale').innerText = `$${parseFloat(data.actuarial_risk.cloud_spot.monthly_reserve).toFixed(2)}`;
+      document.getElementById('tco-cloud-total').innerText = `$${parseFloat(data.actuarial_risk.cloud_spot.risk_adjusted_tco).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+
+      document.getElementById('tco-hybrid-nom').innerText = `$${parseFloat(data.tco_comparison.hybrid_monthly).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+      document.getElementById('tco-hybrid-total').innerText = `$${parseFloat(data.tco_comparison.hybrid_monthly).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+
+      document.getElementById('val-mtbf').innerText = `${parseFloat(data.actuarial_risk.on_prem.mtbf_hours).toLocaleString()} hrs`;
+      document.getElementById('ledger-hash-val').innerText = data.entry_hash;
+
+      const badge = document.getElementById('gate-badge');
+      if (data.constitutional_gate.is_certified) {
+        badge.className = 'status-badge pass';
+        badge.innerText = 'CFO GATE: CERTIFIED';
+      } else {
+        badge.className = 'status-badge warn';
+        badge.innerText = `CFO GATE: ${data.constitutional_gate.violations.length} VIOLATIONS`;
+      }
+    }
+
+    async function verifyLedger() {
+      const res = await fetch('/api/ledger/verify');
+      const data = await res.json();
+      alert(`Cryptographic Audit Ledger Verification: ${data.status} (Valid Chain: ${data.is_valid})`);
+    }
+
+    function setLocale(loc) {
+      currentLocale = loc;
+      document.getElementById('btn-en').className = `lang-btn ${loc === 'en' ? 'active' : ''}`;
+      document.getElementById('btn-es').className = `lang-btn ${loc === 'es' ? 'active' : ''}`;
+
+      document.getElementById('lbl-title').innerText = getI18n('app.header.title', 'Universal Hybrid FinOps Advisor');
+      document.getElementById('lbl-subtitle').innerText = getI18n('app.header.subtitle', 'Deterministic Roofline Physics, Open FAIR Risk & GAAP/IFRS TCO');
+
+      loadQuestionnaire();
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

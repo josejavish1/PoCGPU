@@ -32,6 +32,8 @@ LIGHT_PROMPT = "Resume en 20 palabras por que Kubernetes utiliza cgroups para ai
 CODER_PROMPT = "Escribe una funcion en Python para invertir un arbol binario de busqueda con recursion."
 
 async def send_request(client, model, prompt, max_tokens, request_label):
+    import uuid
+    prompt = f"{prompt} {uuid.uuid4()}"
     payload = {
         "model": model,
         "messages": [{"role": "user", "content": prompt}],

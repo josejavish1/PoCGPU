@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "default_policies": {
+    "constitutional_gate": {
+      "max_rack_units_u": 42,
+      "max_rack_power_kw": "35.00",
+      "max_power_kw_by_cooling_topology": {
+        "AIR_COOLED": "20.00",
+        "DIRECT_LIQUID_COOLED": "60.00",
+        "IMMERSION": "120.00"
+      },
+      "min_carnot_pue": "1.0800",
+      "max_vram_utilization_ratio": "0.9000",
+      "max_memory_bus_utilization_ratio": "0.8500",
+      "min_amortization_months": 12,
+      "max_amortization_months": 84,
+      "max_salvage_value_ratio": "0.3500"
+    },
+    "assessment_decision": {
+      "hybrid_divergence_threshold": "15.00",
+      "min_base_load_split_pct": "0.2000",
+      "max_base_load_split_pct": "0.8000",
+      "min_hybrid_peak_to_average_ratio": "1.5000",
+      "deadlock_default_archetype": "SOVEREIGN_ON_PREM_BARE_METAL",
+      "deadlock_base_split_pct": "1.0000",
+      "hybrid_majority_on_prem_threshold": "0.5000",
+      "on_premise_paradigm_i18n_key": "domain.questionnaire.paradigm.on_premise",
+      "cloud_paradigm_i18n_key": "domain.questionnaire.paradigm.cloud_native",
+      "hybrid_paradigm_i18n_key": "domain.questionnaire.paradigm.hybrid_burst",
+      "deadlock_resolution_i18n_key": "domain.questionnaire.deadlock.resolution"
+    },
+    "roofline_physics": {
+      "bytes_per_gibibyte": "1073741824",
+      "bytes_per_gigabyte_sec": "1000000000",
+      "gflops_per_tflops": "1000",
+      "tflops_scale_factor": "1000000000000",
+      "activation_bytes_per_element": "2.0",
+      "active_batch_max_tokens": 4096,
+      "microbatch_tokens_per_user": 32,
+      "cuda_context_overhead_gb": "1.0000",
+      "kv_headroom_rebuild_buffer_gb": "2.0000",
+      "min_kv_headroom_floor_gb": "0.1000",
+      "baseline_mfu_ratio": "0.4500",
+      "baseline_mbu_ratio": "0.6500"
+    },
+    "actuarial_policy": {
+      "hours_per_year": "8760",
+      "days_per_year": "365",
+      "months_per_year": "12",
+      "seconds_per_hour": "3600",
+      "min_lef_floor": "0.0001",
+      "hot_spare_failover_mttr_hours": "0.2500",
+      "cloud_weight_streaming_gbps": "25.0"
+    },
+    "tco_policy": {
+      "default_hours_per_month": "730.00",
+      "reserved_3yr_cutoff_months": 36,
+      "reserved_1yr_cutoff_months": 12,
+      "months_per_year": "12.00",
+      "hybrid_on_prem_majority_threshold": "0.5000"
+    }
+  },
+  "compliance_frameworks": {
+    "ENS_ALTO": {
+      "i18n_name_key": "compliance.ens_alto.name",
+      "forbid_public_cloud": true,
+      "mandate_air_gap": true,
+      "min_redundancy_n_plus": 2,
+      "default_hourly_sla_penalty": {
+        "amount": "25000.00",
+        "currency": "EUR"
+      }
+    },
+    "HIPAA": {
+      "i18n_name_key": "compliance.hipaa.name",
+      "forbid_public_cloud": false,
+      "mandate_air_gap": false,
+      "min_redundancy_n_plus": 1,
+      "default_hourly_sla_penalty": {
+        "amount": "15000.00",
+        "currency": "USD"
+      }
+    },
+    "DORA": {
+      "i18n_name_key": "compliance.dora.name",
+      "forbid_public_cloud": false,
+      "mandate_air_gap": false,
+      "min_redundancy_n_plus": 2,
+      "default_hourly_sla_penalty": {
+        "amount": "50000.00",
+        "currency": "EUR"
+      }
+    },
+    "FEDRAMP_HIGH": {
+      "i18n_name_key": "compliance.fedramp_high.name",
+      "forbid_public_cloud": true,
+      "mandate_air_gap": true,
+      "min_redundancy_n_plus": 2,
+      "default_hourly_sla_penalty": {
+        "amount": "40000.00",
+        "currency": "USD"
+      }
+    },
+    "PCI_DSS_4": {
+      "i18n_name_key": "compliance.pci_dss_4.name",
+      "forbid_public_cloud": false,
+      "mandate_air_gap": false,
+      "min_redundancy_n_plus": 1,
+      "default_hourly_sla_penalty": {
+        "amount": "20000.00",
+        "currency": "USD"
+      }
+    },
+    "SOC2_TYPE_II": {
+      "i18n_name_key": "compliance.soc2_type_ii.name",
+      "forbid_public_cloud": false,
+      "mandate_air_gap": false,
+      "min_redundancy_n_plus": 1,
+      "default_hourly_sla_penalty": {
+        "amount": "10000.00",
+        "currency": "USD"
+      }
+    },
+    "ISO_27001": {
+      "i18n_name_key": "compliance.iso_27001.name",
+      "forbid_public_cloud": false,
+      "mandate_air_gap": false,
+      "min_redundancy_n_plus": 1,
+      "default_hourly_sla_penalty": {
+        "amount": "12000.00",
+        "currency": "EUR"
+      }
+    }
+  },
+  "verticals": {
+    "BANKING_FINANCE": {
+      "i18n_key": "vertical.banking_finance",
+      "default_compliance": ["DORA", "PCI_DSS_4"],
+      "default_peak_to_average_ratio": "4.2",
+      "default_target_currency": "EUR"
+    },
+    "DEFENSE_NATIONAL_SECURITY": {
+      "i18n_key": "vertical.defense_national_security",
+      "default_compliance": ["ENS_ALTO", "FEDRAMP_HIGH"],
+      "default_peak_to_average_ratio": "1.8",
+      "default_target_currency": "USD"
+    },
+    "HEALTHCARE_LIFE_SCIENCES": {
+      "i18n_key": "vertical.healthcare_life_sciences",
+      "default_compliance": ["HIPAA"],
+      "default_peak_to_average_ratio": "2.5",
+      "default_target_currency": "USD"
+    },
+    "RETAIL_ECOMMERCE": {
+      "i18n_key": "vertical.retail_ecommerce",
+      "default_compliance": ["PCI_DSS_4"],
+      "default_peak_to_average_ratio": "6.5",
+      "default_target_currency": "EUR"
+    },
+    "TELECOM_CLOUD_PROVIDER": {
+      "i18n_key": "vertical.telecom_cloud_provider",
+      "default_compliance": ["DORA", "ENS_ALTO"],
+      "default_peak_to_average_ratio": "3.1",
+      "default_target_currency": "EUR"
+    },
+    "GENERAL_ENTERPRISE_SAAS": {
+      "i18n_key": "vertical.general_enterprise_saas",
+      "default_compliance": ["SOC2_TYPE_II", "ISO_27001"],
+      "default_peak_to_average_ratio": "3.0",
+      "default_target_currency": "USD"
+    },
+    "MANUFACTURING_INDUSTRIAL": {
+      "i18n_key": "vertical.manufacturing_industrial",
+      "default_compliance": ["ISO_27001"],
+      "default_peak_to_average_ratio": "2.0",
+      "default_target_currency": "EUR"
+    }
+  }
+}

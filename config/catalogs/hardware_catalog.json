@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "accelerators": {
+    "NVIDIA_H100_SXM5_80GB": {
+      "vendor": "NVIDIA",
+      "architecture": "Hopper",
+      "fp16_tflops": "989.0",
+      "fp8_tflops": "1979.0",
+      "int8_tops": "1979.0",
+      "vram_gb": "80.0",
+      "memory_bandwidth_gbps": "3350.0",
+      "interconnect": "NVLINK_SXM5",
+      "interconnect_bandwidth_gbps": "900.0",
+      "tensor_parallel_efficiency_factor": "0.9400",
+      "tdp_watts": "700.0",
+      "annualized_failure_rate_pct": "0.0250",
+      "mttr_replacement_hours": "4.0000"
+    },
+    "NVIDIA_L4_24GB": {
+      "vendor": "NVIDIA",
+      "architecture": "Ada Lovelace",
+      "fp16_tflops": "121.0",
+      "fp8_tflops": "242.0",
+      "int8_tops": "242.0",
+      "vram_gb": "24.0",
+      "memory_bandwidth_gbps": "300.0",
+      "interconnect": "PCIE_GEN4",
+      "interconnect_bandwidth_gbps": "64.0",
+      "tensor_parallel_efficiency_factor": "0.7000",
+      "tdp_watts": "72.0",
+      "annualized_failure_rate_pct": "0.0180",
+      "mttr_replacement_hours": "4.0000"
+    },
+    "NVIDIA_A100_SXM4_80GB": {
+      "vendor": "NVIDIA",
+      "architecture": "Ampere",
+      "fp16_tflops": "312.0",
+      "fp8_tflops": "624.0",
+      "int8_tops": "624.0",
+      "vram_gb": "80.0",
+      "memory_bandwidth_gbps": "2039.0",
+      "interconnect": "NVLINK_SXM4",
+      "interconnect_bandwidth_gbps": "600.0",
+      "tensor_parallel_efficiency_factor": "0.9000",
+      "tdp_watts": "400.0",
+      "annualized_failure_rate_pct": "0.0280",
+      "mttr_replacement_hours": "4.0000"
+    },
+    "NVIDIA_H200_SXM5_141GB": {
+      "vendor": "NVIDIA",
+      "architecture": "Hopper",
+      "fp16_tflops": "989.0",
+      "fp8_tflops": "1979.0",
+      "int8_tops": "1979.0",
+      "vram_gb": "141.0",
+      "memory_bandwidth_gbps": "4800.0",
+      "interconnect": "NVLINK_SXM5",
+      "interconnect_bandwidth_gbps": "900.0",
+      "tensor_parallel_efficiency_factor": "0.9400",
+      "tdp_watts": "700.0",
+      "annualized_failure_rate_pct": "0.0250",
+      "mttr_replacement_hours": "4.0000"
+    },
+    "NVIDIA_B200_SXM6_192GB": {
+      "vendor": "NVIDIA",
+      "architecture": "Blackwell",
+      "fp16_tflops": "2250.0",
+      "fp8_tflops": "4500.0",
+      "int8_tops": "4500.0",
+      "vram_gb": "192.0",
+      "memory_bandwidth_gbps": "8000.0",
+      "interconnect": "NVLINK_SXM6",
+      "interconnect_bandwidth_gbps": "1800.0",
+      "tensor_parallel_efficiency_factor": "0.9600",
+      "tdp_watts": "1000.0",
+      "annualized_failure_rate_pct": "0.0300",
+      "mttr_replacement_hours": "4.0000"
+    },
+    "NVIDIA_RTX_4090_24GB": {
+      "vendor": "NVIDIA",
+      "architecture": "Ada Lovelace",
+      "fp16_tflops": "83.0",
+      "fp8_tflops": "165.0",
+      "int8_tops": "165.0",
+      "vram_gb": "24.0",
+      "memory_bandwidth_gbps": "1008.0",
+      "interconnect": "PCIE_GEN4",
+      "interconnect_bandwidth_gbps": "64.0",
+      "tensor_parallel_efficiency_factor": "0.6500",
+      "tdp_watts": "450.0",
+      "annualized_failure_rate_pct": "0.0450",
+      "mttr_replacement_hours": "24.0000"
+    },
+    "AMD_MI300X_192GB": {
+      "vendor": "AMD",
+      "architecture": "CDNA3",
+      "fp16_tflops": "1307.0",
+      "fp8_tflops": "2614.0",
+      "int8_tops": "2614.0",
+      "vram_gb": "192.0",
+      "memory_bandwidth_gbps": "5300.0",
+      "interconnect": "CUSTOM_FABRIC",
+      "interconnect_bandwidth_gbps": "896.0",
+      "tensor_parallel_efficiency_factor": "0.9200",
+      "tdp_watts": "750.0",
+      "annualized_failure_rate_pct": "0.0350",
+      "mttr_replacement_hours": "8.0000"
+    }
+  },
+  "chassis": {
+    "SUPERMICRO_SYS_821GE_TNHR_H100": {
+      "oem_vendor": "Supermicro",
+      "model_name": "SYS-821GE-TNHR (8x H100 SXM5)",
+      "accelerator_sku_id": "NVIDIA_H100_SXM5_80GB",
+      "accelerators_per_chassis": 8,
+      "base_system_power_watts": "4600.0",
+      "rack_units_u": 8,
+      "capex_unit_price": {
+        "amount": "285000.00",
+        "currency": "USD"
+      },
+      "oem_warranty_annual_pct": "0.0800",
+      "salvage_value_by_horizon_months": {
+        "12": "0.7000",
+        "24": "0.5000",
+        "36": "0.2500",
+        "48": "0.1500",
+        "60": "0.0800",
+        "84": "0.0200"
+      }
+    },
+    "DELL_POWEREDGE_XE9680_H100": {
+      "oem_vendor": "Dell Technologies",
+      "model_name": "PowerEdge XE9680 (8x H100 SXM5)",
+      "accelerator_sku_id": "NVIDIA_H100_SXM5_80GB",
+      "accelerators_per_chassis": 8,
+      "base_system_power_watts": "4600.0",
+      "rack_units_u": 6,
+      "capex_unit_price": {
+        "amount": "295000.00",
+        "currency": "USD"
+      },
+      "oem_warranty_annual_pct": "0.0900",
+      "salvage_value_by_horizon_months": {
+        "12": "0.7200",
+        "24": "0.5200",
+        "36": "0.2800",
+        "48": "0.1800",
+        "60": "0.1000",
+        "84": "0.0300"
+      }
+    },
+    "SUPERMICRO_SYS_221GE_TNRT_L4": {
+      "oem_vendor": "Supermicro",
+      "model_name": "SYS-221GE-TNRT (4x L4 PCIe)",
+      "accelerator_sku_id": "NVIDIA_L4_24GB",
+      "accelerators_per_chassis": 4,
+      "base_system_power_watts": "912.0",
+      "rack_units_u": 2,
+      "capex_unit_price": {
+        "amount": "24000.00",
+        "currency": "USD"
+      },
+      "oem_warranty_annual_pct": "0.0700",
+      "salvage_value_by_horizon_months": {
+        "12": "0.6500",
+        "24": "0.4500",
+        "36": "0.2000",
+        "48": "0.1000",
+        "60": "0.0500",
+        "84": "0.0100"
+      }
+    },
+    "GIGABYTE_G293_Z43_RTX4090": {
+      "oem_vendor": "Gigabyte",
+      "model_name": "G293-Z43 (4x RTX 4090 24GB)",
+      "accelerator_sku_id": "NVIDIA_RTX_4090_24GB",
+      "accelerators_per_chassis": 4,
+      "base_system_power_watts": "600.0",
+      "rack_units_u": 2,
+      "capex_unit_price": {
+        "amount": "18500.00",
+        "currency": "USD"
+      },
+      "oem_warranty_annual_pct": "0.0600",
+      "salvage_value_by_horizon_months": {
+        "12": "0.6000",
+        "24": "0.4000",
+        "36": "0.1500",
+        "48": "0.0800",
+        "60": "0.0300",
+        "84": "0.0100"
+      }
+    },
+    "SUPERMICRO_SYS_821GE_TNHR_B200": {
+      "oem_vendor": "Supermicro",
+      "model_name": "SYS-821GE-TNHR (8x B200 SXM6)",
+      "accelerator_sku_id": "NVIDIA_B200_SXM6_192GB",
+      "accelerators_per_chassis": 8,
+      "base_system_power_watts": "6300.0",
+      "rack_units_u": 8,
+      "capex_unit_price": {
+        "amount": "380000.00",
+        "currency": "USD"
+      },
+      "oem_warranty_annual_pct": "0.1000",
+      "salvage_value_by_horizon_months": {
+        "12": "0.7500",
+        "24": "0.5500",
+        "36": "0.3200",
+        "48": "0.2000",
+        "60": "0.1200",
+        "84": "0.0400"
+      }
+    }
+  }
+}

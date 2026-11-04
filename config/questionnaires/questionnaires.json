@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "questions": [
+    {
+      "question_id": "Q1_SOVEREIGNTY",
+      "dimension_name": "Data Sovereignty & Compliance",
+      "i18n_prompt_key": "domain.questionnaire.dim.sovereignty",
+      "weight": "2.5000",
+      "options": [
+        {
+          "option_id": "Q1_STRICT_REGULATORY_VETO",
+          "i18n_label_key": "questionnaire.opt.q1.strict_veto",
+          "on_prem_affinity_score": "100.0000",
+          "cloud_affinity_score": "0.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": true
+        },
+        {
+          "option_id": "Q1_CONFIDENTIAL_CORPORATE",
+          "i18n_label_key": "questionnaire.opt.q1.confidential",
+          "on_prem_affinity_score": "80.0000",
+          "cloud_affinity_score": "40.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        },
+        {
+          "option_id": "Q1_PUBLIC_DATA_NO_RESIDENCY",
+          "i18n_label_key": "questionnaire.opt.q1.public",
+          "on_prem_affinity_score": "20.0000",
+          "cloud_affinity_score": "100.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        }
+      ]
+    },
+    {
+      "question_id": "Q2_DUTY_CYCLE",
+      "dimension_name": "Workload Predictability & Duty Cycle",
+      "i18n_prompt_key": "domain.questionnaire.dim.duty_cycle",
+      "weight": "2.0000",
+      "options": [
+        {
+          "option_id": "Q2_SUSTAINED_24_7_BASELINE",
+          "i18n_label_key": "questionnaire.opt.q2.sustained",
+          "on_prem_affinity_score": "95.0000",
+          "cloud_affinity_score": "25.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        },
+        {
+          "option_id": "Q2_DIURNAL_HIGH_PEAK_RATIO",
+          "i18n_label_key": "questionnaire.opt.q2.diurnal_burst",
+          "on_prem_affinity_score": "60.0000",
+          "cloud_affinity_score": "85.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        },
+        {
+          "option_id": "Q2_HIGHLY_SPORADIC_EXPERIMENTAL",
+          "i18n_label_key": "questionnaire.opt.q2.sporadic",
+          "on_prem_affinity_score": "10.0000",
+          "cloud_affinity_score": "100.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        }
+      ]
+    },
+    {
+      "question_id": "Q3_DATACENTER",
+      "dimension_name": "Datacenter Infrastructure Readiness",
+      "i18n_prompt_key": "domain.questionnaire.dim.datacenter",
+      "weight": "2.0000",
+      "options": [
+        {
+          "option_id": "Q3_OWNED_CPD_AVAILABLE_KW",
+          "i18n_label_key": "questionnaire.opt.q3.owned_cpd",
+          "on_prem_affinity_score": "100.0000",
+          "cloud_affinity_score": "30.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        },
+        {
+          "option_id": "Q3_COLOCATION_LEASE_VIABLE",
+          "i18n_label_key": "questionnaire.opt.q3.colocation_viable",
+          "on_prem_affinity_score": "70.0000",
+          "cloud_affinity_score": "60.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        },
+        {
+          "option_id": "Q3_ZERO_PHYSICAL_FACILITIES",
+          "i18n_label_key": "questionnaire.opt.q3.zero_physical",
+          "on_prem_affinity_score": "0.0000",
+          "cloud_affinity_score": "100.0000",
+          "is_hard_on_prem_veto": true,
+          "is_hard_cloud_veto": false
+        }
+      ]
+    },
+    {
+      "question_id": "Q4_ACCOUNTING",
+      "dimension_name": "Financial Accounting Preference",
+      "i18n_prompt_key": "domain.questionnaire.dim.accounting",
+      "weight": "1.5000",
+      "options": [
+        {
+          "option_id": "Q4_CAPEX_ASSET_DEPRECIATION",
+          "i18n_label_key": "questionnaire.opt.q4.capex_preference",
+          "on_prem_affinity_score": "90.0000",
+          "cloud_affinity_score": "20.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        },
+        {
+          "option_id": "Q4_BALANCED_HYBRID_ACCOUNTING",
+          "i18n_label_key": "questionnaire.opt.q4.balanced",
+          "on_prem_affinity_score": "60.0000",
+          "cloud_affinity_score": "60.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        },
+        {
+          "option_id": "Q4_OPEX_ZERO_UPFRONT_COMMITMENT",
+          "i18n_label_key": "questionnaire.opt.q4.opex_preference",
+          "on_prem_affinity_score": "15.0000",
+          "cloud_affinity_score": "95.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        }
+      ]
+    },
+    {
+      "question_id": "Q5_OPERATIONS",
+      "dimension_name": "Operational Engineering Maturity",
+      "i18n_prompt_key": "domain.questionnaire.dim.operations",
+      "weight": "1.5000",
+      "options": [
+        {
+          "option_id": "Q5_MATURE_SRE_HARDWARE_TEAM",
+          "i18n_label_key": "questionnaire.opt.q5.mature_sre",
+          "on_prem_affinity_score": "95.0000",
+          "cloud_affinity_score": "50.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        },
+        {
+          "option_id": "Q5_MANAGED_KUBERNETES_TEAM",
+          "i18n_label_key": "questionnaire.opt.q5.k8s_team",
+          "on_prem_affinity_score": "65.0000",
+          "cloud_affinity_score": "75.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        },
+        {
+          "option_id": "Q5_LEAN_DEVELOPER_TEAM_ZERO_INFRA",
+          "i18n_label_key": "questionnaire.opt.q5.lean_dev",
+          "on_prem_affinity_score": "10.0000",
+          "cloud_affinity_score": "100.0000",
+          "is_hard_on_prem_veto": false,
+          "is_hard_cloud_veto": false
+        }
+      ]
+    }
+  ]
+}

@@ -72,6 +72,11 @@ Blueprint de ingeniería de infraestructura Tier-1 para servir modelos LLM concu
 ├── 06_GUIA_PRACTICA_POC_SATURACION.md  # Guía de campo: Dashboard web, API Keys y saturación
 ├── 07_VARIANTE_MINIMO_COSTE_SPOT_MISTRAL.md # Variante de coste optimizado con Spot y Mistral-7B
 ├── 08_ESTADO_ZURICH_Y_OPERACIONES.md   # Guía operativa: Hibernación, reactivación, credenciales y URLs
+├── 09_MODELO_FINOPS_CALCULADORA.md     # Especificación FinOps: Sizing de hardware, Roofline y chargeback
+├── 10_BACKLOG_FINOPS_INSTITUCIONAL.md  # Backlog técnico Tier-1: Primitivas neurosimbólicas y hoja de ruta
+├── docs/RFC_063_UNIVERSAL_HYBRID_FINOPS_ADVISOR_ARGON.md # Master Blueprint: Universal Hybrid FinOps Advisor (gemini-4-argon)
+├── docs/RFC_064_PHASE2_DOMAIN_SERVICES_SPECIFICATION_ARGON.md # Phase 2 Technical Specification: Pure Domain Services (gemini-4-argon)
+├── docs/RFC_065_ZERO_DEFECT_ZERO_HARDCODING_MASTER_PLAN_ARGON.md # Master Quality Plan: Universal Zero-Defect & Zero-Hardcoding (gemini-4-argon)
 ├── manifests/                          # Manifiestos YAML declarativos para Kubernetes
 │   ├── 01_gpu_audit.yaml               # Pod de diagnóstico de hardware y topología NCCL
 │   ├── 02_storage.yaml                 # PVC genérico y Job preloader de almacenamiento
@@ -88,6 +93,7 @@ Blueprint de ingeniería de infraestructura Tier-1 para servir modelos LLM concu
     ├── benchmark.py                    # Suite asíncrona de pruebas de carga con streaming
     ├── classify_incident.py            # Validador de inferencia de incidentes con LoRA
     ├── enrich_enterprise_metrics.py    # Generador de tráfico sintético para métricas en Grafana
+    ├── finops_tier1_engine.py          # Motor FinOps Tier-1: Planificador de capacidad, Roofline y TCO
     ├── ide_copilot_simulator.py        # Simulador de peticiones concurrentes de IDE Continue.dev
     ├── interactive_chat.py             # Cliente CLI interactivo con métricas de streaming y TTFT
     ├── saturation_probe.py             # Sonda de saturación extrema de KV Cache y PagedAttention

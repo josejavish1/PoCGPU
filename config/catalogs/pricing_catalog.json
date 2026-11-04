@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "fx_rates_to_usd": {
+    "USD": "1.0000",
+    "EUR": "0.9200",
+    "JPY": "154.5000",
+    "GBP": "0.7800",
+    "CHF": "0.8800"
+  },
+  "cloud_instances": {
+    "gcp-g2-standard-24-l4x2": {
+      "provider_id": "GCP",
+      "region": "europe-west6-b",
+      "instance_type": "g2-standard-24",
+      "accelerator_sku_id": "NVIDIA_L4_24GB",
+      "accelerators_per_instance": 2,
+      "currency": "USD",
+      "on_demand_hourly": "2.8500",
+      "reserved_1yr_hourly": "1.8000",
+      "reserved_3yr_hourly": "1.2500",
+      "spot_hourly_mean": "0.9800",
+      "spot_preemption_probability_daily": "0.0350",
+      "cold_boot_rebuild_seconds": "90.0000",
+      "storage_gb_monthly": "0.0800",
+      "egress_gb_price": "0.0850"
+    },
+    "gcp-a3-highgpu-8g-h100x8": {
+      "provider_id": "GCP",
+      "region": "us-central1-a",
+      "instance_type": "a3-highgpu-8g",
+      "accelerator_sku_id": "NVIDIA_H100_SXM5_80GB",
+      "accelerators_per_instance": 8,
+      "currency": "USD",
+      "on_demand_hourly": "30.8000",
+      "reserved_1yr_hourly": "21.5000",
+      "reserved_3yr_hourly": "14.2000",
+      "spot_hourly_mean": "10.5000",
+      "spot_preemption_probability_daily": "0.0450",
+      "cold_boot_rebuild_seconds": "120.0000",
+      "storage_gb_monthly": "0.0800",
+      "egress_gb_price": "0.0850"
+    },
+    "aws-p5-48xlarge-h100x8": {
+      "provider_id": "AWS",
+      "region": "us-east-1",
+      "instance_type": "p5.48xlarge",
+      "accelerator_sku_id": "NVIDIA_H100_SXM5_80GB",
+      "accelerators_per_instance": 8,
+      "currency": "USD",
+      "on_demand_hourly": "32.7700",
+      "reserved_1yr_hourly": "22.0000",
+      "reserved_3yr_hourly": "15.0000",
+      "spot_hourly_mean": "11.2000",
+      "spot_preemption_probability_daily": "0.0400",
+      "cold_boot_rebuild_seconds": "110.0000",
+      "storage_gb_monthly": "0.1000",
+      "egress_gb_price": "0.0900"
+    },
+    "runpod-h100-sxm8": {
+      "provider_id": "RUNPOD",
+      "region": "global",
+      "instance_type": "8x-H100-SXM",
+      "accelerator_sku_id": "NVIDIA_H100_SXM5_80GB",
+      "accelerators_per_instance": 8,
+      "currency": "USD",
+      "on_demand_hourly": "23.9200",
+      "reserved_1yr_hourly": "18.0000",
+      "reserved_3yr_hourly": "14.0000",
+      "spot_hourly_mean": "9.5000",
+      "spot_preemption_probability_daily": "0.0550",
+      "cold_boot_rebuild_seconds": "150.0000",
+      "storage_gb_monthly": "0.0700",
+      "egress_gb_price": "0.0300"
+    }
+  }
+}
