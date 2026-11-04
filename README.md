@@ -2,6 +2,10 @@
 
 Blueprint de ingeniería de infraestructura Tier-1 para servir modelos LLM concurrentes sobre aceleradores GPU sin fragmentación estática de VRAM, integrando balanceo Activo-Activo, gobernanza de costes por departamento, observabilidad en tiempo real y consumo corporativo (Web e IDE).
 
+## Engineering authority
+
+All new calculator engineering is governed by the [Engineering Constitution](docs/engineering-constitution/README.md). It defines the canonical product semantics, calculation rules, data governance, no-hardcoding policy, internationalization boundary, architecture, quality gates, migration constraints, and Definition of Done.
+
 ---
 
 ## 1. Objetivos del Proyecto

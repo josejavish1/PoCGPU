@@ -1,0 +1,28 @@
+name: Engineering Governance
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate engineering authority
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Validate engineering constitution
+        run: python3 scripts/validate_engineering_constitution.py
+
+      - name: Run governance control tests
+        run: python3 -m unittest discover -s tests/governance -p 'test_*.py'
+
+      - name: Run lexical source gate
+        run: python3 tests/architecture/test_zero_spanish_literals.py

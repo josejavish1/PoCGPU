@@ -1,0 +1,532 @@
+{
+  "schema_version": "1.0.0",
+  "governance_phase": 0,
+  "repository_baseline": {
+    "branch": "origin/main",
+    "commit": "eda8c880ba94b4922b4e70cbb0331542ae4884f9"
+  },
+  "enforcement": {
+    "required_files": [
+      ".github/workflows/engineering-governance.yml",
+      "docs/engineering-constitution/constitution.manifest.json",
+      "scripts/validate_engineering_constitution.py",
+      "tests/governance/test_engineering_constitution.py"
+    ],
+    "ci_workflow": ".github/workflows/engineering-governance.yml",
+    "required_ci_commands": [
+      "python3 scripts/validate_engineering_constitution.py",
+      "python3 -m unittest discover -s tests/governance -p 'test_*.py'",
+      "python3 tests/architecture/test_zero_spanish_literals.py"
+    ]
+  },
+  "constitution": {
+    "root": "docs/engineering-constitution",
+    "require_complete_markdown_inventory": true,
+    "required_documents": [
+      {
+        "path": "README.md",
+        "required_headings": [
+          "# Engineering Constitution",
+          "## Authority order",
+          "## Documents",
+          "## Mandatory lifecycle"
+        ]
+      },
+      {
+        "path": "PHASE_0_PLAN.md",
+        "required_headings": [
+          "# Phase 0 Plan: Engineering Constitution",
+          "## Objective",
+          "## Scope",
+          "## Deliverables"
+        ]
+      },
+      {
+        "path": "PHASE_0_COMPLETION_REPORT.md",
+        "required_headings": [
+          "# Phase 0 Completion Report",
+          "## Status",
+          "## Quantitative evidence",
+          "## Acceptance review"
+        ]
+      },
+      {
+        "path": "PRODUCT_CONSTITUTION.md",
+        "required_headings": [
+          "# Product Constitution",
+          "## Mission",
+          "## Product principles",
+          "## Result states"
+        ]
+      },
+      {
+        "path": "DOMAIN_GLOSSARY.md",
+        "required_headings": [
+          "# Domain Glossary",
+          "## Prohibited semantic substitutions"
+        ]
+      },
+      {
+        "path": "REQUIREMENTS_TRACEABILITY.md",
+        "required_headings": [
+          "# Requirements Traceability Matrix",
+          "## Normative requirements",
+          "## Traceability rule"
+        ]
+      },
+      {
+        "path": "CALCULATION_CONSTITUTION.md",
+        "required_headings": [
+          "# Calculation Constitution",
+          "## Calculation record requirements",
+          "## Initial formula registry",
+          "## Formula change control"
+        ]
+      },
+      {
+        "path": "DATA_GOVERNANCE.md",
+        "required_headings": [
+          "# Data Governance Policy",
+          "## Required metadata",
+          "## Missing data"
+        ]
+      },
+      {
+        "path": "NO_HARDCODING_POLICY.md",
+        "required_headings": [
+          "# No Hardcoding Policy",
+          "## Prohibited source content",
+          "## Configuration rules",
+          "## Detection gates"
+        ]
+      },
+      {
+        "path": "INTERNATIONALIZATION_CONSTITUTION.md",
+        "required_headings": [
+          "# Internationalization Constitution",
+          "## Language boundary",
+          "## Locale pack contract",
+          "## Testing"
+        ]
+      },
+      {
+        "path": "ARCHITECTURE.md",
+        "required_headings": [
+          "# Target Architecture",
+          "## Dependency direction",
+          "## Target modules",
+          "## Determinism"
+        ]
+      },
+      {
+        "path": "QUALITY_STRATEGY.md",
+        "required_headings": [
+          "# Quality and Verification Strategy",
+          "## Gate order",
+          "## Test classes",
+          "## Test reliability"
+        ]
+      },
+      {
+        "path": "RISK_REGISTER.md",
+        "required_headings": [
+          "# Risk Register and FMEA",
+          "## Failure modes",
+          "## FMEA workflow"
+        ]
+      },
+      {
+        "path": "MIGRATION_BASELINE.md",
+        "required_headings": [
+          "# Migration Baseline",
+          "## Current findings",
+          "## Migration constraints"
+        ]
+      },
+      {
+        "path": "DEFINITION_OF_DONE.md",
+        "required_headings": [
+          "# Definition of Done",
+          "## Phase readiness",
+          "## Implementation completion",
+          "## Certification rule"
+        ]
+      },
+      {
+        "path": "adr/README.md",
+        "required_headings": [
+          "# Architecture Decision Records"
+        ]
+      },
+      {
+        "path": "adr/0001-single-canonical-engine.md",
+        "required_headings": [
+          "# ADR-0001: Single Canonical Calculation Engine",
+          "## Context",
+          "## Decision",
+          "## Consequences"
+        ]
+      },
+      {
+        "path": "adr/0002-benchmark-first-capacity.md",
+        "required_headings": [
+          "# ADR-0002: Benchmark-First Useful Capacity",
+          "## Context",
+          "## Decision",
+          "## Consequences"
+        ]
+      },
+      {
+        "path": "adr/0003-declarative-variation.md",
+        "required_headings": [
+          "# ADR-0003: Declarative Variation",
+          "## Context",
+          "## Decision",
+          "## Consequences"
+        ]
+      },
+      {
+        "path": "adr/0004-localization-boundary.md",
+        "required_headings": [
+          "# ADR-0004: Localization Boundary",
+          "## Context",
+          "## Decision",
+          "## Consequences"
+        ]
+      },
+      {
+        "path": "adr/0005-deterministic-numeric-model.md",
+        "required_headings": [
+          "# ADR-0005: Deterministic Decimal and Quantity Model",
+          "## Context",
+          "## Decision",
+          "## Consequences"
+        ]
+      }
+    ]
+  },
+  "registries": [
+    {
+      "name": "requirements",
+      "path_glob": "docs/engineering-constitution/REQUIREMENTS_TRACEABILITY.md",
+      "declaration_pattern": "^\\| (?P<identifier>(?:PRD|CAL|DAT|ARC|I18N|QLT|SEC|MIG)-[0-9]{3}) \\|",
+      "expected_identifiers": [
+        "PRD-001",
+        "PRD-002",
+        "PRD-003",
+        "PRD-004",
+        "PRD-005",
+        "PRD-006",
+        "CAL-001",
+        "CAL-002",
+        "CAL-003",
+        "CAL-004",
+        "CAL-005",
+        "CAL-006",
+        "CAL-007",
+        "CAL-008",
+        "CAL-009",
+        "CAL-010",
+        "CAL-011",
+        "CAL-012",
+        "CAL-013",
+        "CAL-014",
+        "DAT-001",
+        "DAT-002",
+        "DAT-003",
+        "DAT-004",
+        "DAT-005",
+        "ARC-001",
+        "ARC-002",
+        "ARC-003",
+        "ARC-004",
+        "ARC-005",
+        "ARC-006",
+        "I18N-001",
+        "I18N-002",
+        "I18N-003",
+        "I18N-004",
+        "QLT-001",
+        "QLT-002",
+        "QLT-003",
+        "QLT-004",
+        "QLT-005",
+        "QLT-006",
+        "SEC-001",
+        "SEC-002",
+        "SEC-003",
+        "MIG-001",
+        "MIG-002",
+        "MIG-003",
+        "MIG-004",
+        "MIG-005"
+      ]
+    },
+    {
+      "name": "formulas",
+      "path_glob": "docs/engineering-constitution/CALCULATION_CONSTITUTION.md",
+      "declaration_pattern": "^#### (?P<identifier>(?:CAP|TCO|ECO|PRC|API|HYB)-[0-9]{3}):",
+      "expected_identifiers": [
+        "CAP-001",
+        "CAP-002",
+        "CAP-003",
+        "CAP-004",
+        "CAP-005",
+        "TCO-001",
+        "TCO-002",
+        "TCO-003",
+        "ECO-001",
+        "ECO-002",
+        "PRC-001",
+        "PRC-002",
+        "API-001",
+        "API-002",
+        "HYB-001"
+      ]
+    },
+    {
+      "name": "risks",
+      "path_glob": "docs/engineering-constitution/RISK_REGISTER.md",
+      "declaration_pattern": "^\\| (?P<identifier>RSK-[0-9]{3}) \\|",
+      "expected_identifiers": [
+        "RSK-001",
+        "RSK-002",
+        "RSK-003",
+        "RSK-004",
+        "RSK-005",
+        "RSK-006",
+        "RSK-007",
+        "RSK-008",
+        "RSK-009",
+        "RSK-010",
+        "RSK-011",
+        "RSK-012",
+        "RSK-013",
+        "RSK-014",
+        "RSK-015",
+        "RSK-016",
+        "RSK-017",
+        "RSK-018",
+        "RSK-019",
+        "RSK-020",
+        "RSK-021",
+        "RSK-022",
+        "RSK-023",
+        "RSK-024"
+      ]
+    },
+    {
+      "name": "architecture_decisions",
+      "path_glob": "docs/engineering-constitution/adr/[0-9][0-9][0-9][0-9]-*.md",
+      "declaration_pattern": "^# ADR-(?P<identifier>[0-9]{4}):",
+      "expected_identifiers": [
+        "0001",
+        "0002",
+        "0003",
+        "0004",
+        "0005"
+      ]
+    }
+  ],
+  "table_contracts": [
+    {
+      "name": "requirement ownership",
+      "path": "docs/engineering-constitution/REQUIREMENTS_TRACEABILITY.md",
+      "registry": "requirements",
+      "key_column": "ID",
+      "required_columns": [
+        "ID",
+        "Requirement",
+        "Planned phase",
+        "Verification"
+      ],
+      "constraints": [
+        {
+          "column": "Planned phase",
+          "type": "phase_range"
+        }
+      ]
+    },
+    {
+      "name": "formula governance",
+      "path": "docs/engineering-constitution/CALCULATION_CONSTITUTION.md",
+      "registry": "formulas",
+      "key_column": "Formula ID",
+      "required_columns": [
+        "Formula ID",
+        "Version",
+        "Owning phase",
+        "Approval state"
+      ],
+      "constraints": [
+        {
+          "column": "Version",
+          "type": "pattern",
+          "pattern": "[0-9]+\\.[0-9]+\\.[0-9]+"
+        },
+        {
+          "column": "Owning phase",
+          "type": "phase_range"
+        },
+        {
+          "column": "Approval state",
+          "type": "allowed_values",
+          "values": [
+            "DEFINED"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "risk ownership",
+      "path": "docs/engineering-constitution/RISK_REGISTER.md",
+      "registry": "risks",
+      "key_column": "ID",
+      "required_columns": [
+        "ID",
+        "Failure mode",
+        "Effect",
+        "Severity",
+        "Likelihood",
+        "Preventive control",
+        "Detection control",
+        "Owning phase"
+      ],
+      "constraints": [
+        {
+          "column": "Owning phase",
+          "type": "phase_range"
+        }
+      ]
+    }
+  ],
+  "phase_policy": {
+    "allowed_phases": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "link_policy": {
+    "roots": [
+      "docs/engineering-constitution"
+    ],
+    "extensions": [
+      ".md"
+    ],
+    "validate_fragments": true
+  },
+  "canonical_text_policy": {
+    "roots": [
+      "docs/engineering-constitution"
+    ],
+    "extensions": [
+      ".md",
+      ".json"
+    ],
+    "ascii_only": true
+  },
+  "source_text_policy": {
+    "roots": [
+      "src",
+      "scripts",
+      "tests",
+      "config",
+      "manifests",
+      ".github"
+    ],
+    "extensions": [
+      ".py",
+      ".js",
+      ".html",
+      ".yaml",
+      ".yml",
+      ".json"
+    ],
+    "forbid_non_ascii_letters": true,
+    "forbidden_code_points": [
+      "U+00A1",
+      "U+00BF",
+      "U+00C1",
+      "U+00C9",
+      "U+00CD",
+      "U+00D1",
+      "U+00D3",
+      "U+00DA",
+      "U+00DC",
+      "U+00E1",
+      "U+00E9",
+      "U+00ED",
+      "U+00F1",
+      "U+00F3",
+      "U+00FA",
+      "U+00FC"
+    ],
+    "localized_resources": [
+      "config/locales.json"
+    ],
+    "legacy_ratchet": {
+      "expires_before_phase": 1,
+      "files": [
+        {
+          "path": "scripts/benchmark.py",
+          "sha256": "1f89b93a7b91786cdf3b39fffbdc9cc167369efc063aa6f9ada46cc6e1de4c12"
+        },
+        {
+          "path": "scripts/classify_incident.py",
+          "sha256": "b0f277c9ca89cff7a246f21be1ec4bdccbbd296fe4199acde7ce44e6266a70b1"
+        },
+        {
+          "path": "scripts/enrich_enterprise_metrics.py",
+          "sha256": "0ee203f4518adb82ac5b0c0c068642d9755058223c2dd418e72a21ff9704e504"
+        },
+        {
+          "path": "scripts/finops_calculator.py",
+          "sha256": "a21af1e8c231ff4631073a455428d3fa5a5be1f2e2c537aba2c6649ae14c2181"
+        },
+        {
+          "path": "scripts/ide_copilot_simulator.py",
+          "sha256": "5367b96b8c553a6d2469f0df33c9174264fe1d0c1dccc6d0ce991f92c296b050"
+        },
+        {
+          "path": "scripts/interactive_chat.py",
+          "sha256": "5ea0ecc0ca683f9b699f67f033a6959d46839b54a1efc96b0d2eeb1b46ee40a5"
+        },
+        {
+          "path": "scripts/saturation_probe.py",
+          "sha256": "1829ef14ea867e799ef2163bd07bceac1aa963fcde8d03852820a723aca3d1a8"
+        },
+        {
+          "path": "scripts/seed_enterprise_demo.py",
+          "sha256": "3b93afceefccd1b70d6d90b6a8665bfa4093b164704bc96cbfa3ccd80c13529d"
+        },
+        {
+          "path": "scripts/simulate_enterprise_governance.py",
+          "sha256": "ef31240e0cfc3ea8ca4d4f418dec736b892ab3fafe2512cb85f3360680e9a63e"
+        },
+        {
+          "path": "scripts/verify_balanced_saturation.py",
+          "sha256": "86898577100806eb80c272b011aa3bc06a5a56b394ad3de81b52b482ac5a19dc"
+        },
+        {
+          "path": "tests/architecture/test_zero_spanish_literals.py",
+          "sha256": "5e115ab1da830d4d86f9d2b3f71e3ae35f1df3f5f26d93f4b7b0f248d7cf2e00"
+        },
+        {
+          "path": "manifests/07_observability_and_alerts.yaml",
+          "sha256": "af624f83e881b3282100741fcb0acf63c11ccd977d3b1ca0b0e8a62d1c568723"
+        },
+        {
+          "path": "manifests/08_grafana_prometheus.yaml",
+          "sha256": "dd97cea4ecd565e4210b8903e8e4a0c8e9cd83fdd086d53246676421975ccffc"
+        }
+      ]
+    }
+  }
+}
