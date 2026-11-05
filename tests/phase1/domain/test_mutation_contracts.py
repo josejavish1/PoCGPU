@@ -361,7 +361,9 @@ def test_serialization_error_tokens_and_mixed_set_order_are_exact() -> None:
     mixed = canonical_json_bytes(frozenset({1, "1"}), schema, version)
     assert mixed == (b'{"payload":["1",1],"schema_id":"schema.synthetic","schema_version":"1.0.0"}')
     numeric_set = canonical_json_bytes(frozenset({2, 10}), schema, version)
-    assert numeric_set == (b'{"payload":[10,2],"schema_id":"schema.synthetic","schema_version":"1.0.0"}')
+    assert numeric_set == (
+        b'{"payload":[10,2],"schema_id":"schema.synthetic","schema_version":"1.0.0"}'
+    )
     unicode_set = canonical_json_bytes(frozenset({"z", "\u00e9"}), schema, version)
     assert b"\\u00e9" not in unicode_set
     assert json.loads(unicode_set)["payload"] == ["z", "\u00e9"]
