@@ -1,0 +1,20 @@
+========================================
+ CALCULADORA FINOPS TIER-1 (PoCGPU) 
+========================================
+
+--- CALCULADORA A: DIMENSIONAMIENTO (SIZING) ---
+Parámetros del Modelo Base (Billones, ej. 7, 32, 70): Precisión en bits (ej. 16 para FP16, 4 para INT4): Ventana de contexto máxima en tokens (ej. 8192): Usuarios concurrentes máximos en pico (ej. 20): 
+[+] VRAM para Pesos del Modelo (Inmutable): 13.04 GB
+[+] VRAM para KV Cache (Sujeto a PagedAttention): 0.19 GB
+[+] VRAM Total Requerida (con 20% margen): 15.88 GB
+[*] Hardware Sugerido: 1x NVIDIA L4 (24GB c/u)
+----------------------------------------
+
+--- CALCULADORA B: FACTURACIÓN A DEPARTAMENTOS (CHARGEBACK) ---
+Coste mensual de infraestructura en USD (ej. 850): Utilización efectiva promedio (%) (ej. 30): Throughput promedio empírico (tokens/segundo) (ej. 680): Margen de beneficio comercial (%) (ej. 20): 
+[+] Capacidad Productiva Mensual (con util=30.0%): 528.77 Millones de Tokens
+[+] Coste Base por 1M Tokens (Break-Even): $1.6075
+[*] Precio Sugerido por 1M Tokens (con margen): $1.9290
+
+* Configura este precio en la tabla LiteLLM_TeamTable de PostgreSQL.
+========================================

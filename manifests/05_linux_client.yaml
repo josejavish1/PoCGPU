@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: cliente-linux
+  name: linux-client
   namespace: default
   labels:
-    app: cliente-linux
+    app: linux-client
 spec:
   restartPolicy: Always
   containers:
@@ -15,11 +15,17 @@ spec:
     - name: AI_GATEWAY_URL
       value: "http://enterprise-ai-gateway-svc:80/v1"
     - name: AI_API_KEY
-      value: "sk--ZTZkW7djliQw98HQtgiew"
+      valueFrom:
+        secretKeyRef:
+          name: ai-platform-secrets
+          key: LITELLM_MASTER_KEY
     - name: OPENAI_API_BASE
       value: "http://enterprise-ai-gateway-svc:80/v1"
     - name: OPENAI_API_KEY
-      value: "sk--ZTZkW7djliQw98HQtgiew"
+      valueFrom:
+        secretKeyRef:
+          name: ai-platform-secrets
+          key: LITELLM_MASTER_KEY
     resources:
       limits:
         cpu: "1"

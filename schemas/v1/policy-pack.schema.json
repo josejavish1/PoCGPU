@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "CanonicalJsonScalar": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "CanonicalJsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CanonicalJsonScalar"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/CanonicalJsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/CanonicalJsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "PolicyOverrideContract": {
+      "additionalProperties": false,
+      "properties": {
+        "keys": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Keys",
+          "type": "array"
+        },
+        "target_pack_id": {
+          "title": "Target Pack Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_pack_id",
+        "keys"
+      ],
+      "title": "PolicyOverrideContract",
+      "type": "object"
+    },
+    "PolicySettingContract": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/CanonicalJsonValue"
+        },
+        "value_schema_id": {
+          "title": "Value Schema Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value_schema_id",
+        "value"
+      ],
+      "title": "PolicySettingContract",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "overrides": {
+      "items": {
+        "$ref": "#/$defs/PolicyOverrideContract"
+      },
+      "title": "Overrides",
+      "type": "array"
+    },
+    "pack_id": {
+      "title": "Pack Id",
+      "type": "string"
+    },
+    "settings": {
+      "items": {
+        "$ref": "#/$defs/PolicySettingContract"
+      },
+      "title": "Settings",
+      "type": "array"
+    },
+    "tenant_id": {
+      "title": "Tenant Id",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pack_id",
+    "tenant_id",
+    "version",
+    "settings",
+    "overrides"
+  ],
+  "title": "PolicyPackContract",
+  "type": "object"
+}

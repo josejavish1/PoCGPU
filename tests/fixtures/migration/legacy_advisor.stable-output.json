@@ -1,0 +1,74 @@
+{
+  "actuarial_risk": {
+    "cloud_spot": {
+      "annual_lef": "16.4250",
+      "monthly_reserve": "4213.0125",
+      "mtbf_hours": "533.33",
+      "recovery_mttr_hours": "0.0450",
+      "risk_adjusted_tco": "15311.9845"
+    },
+    "hybrid": {
+      "annual_lef": "0.2000",
+      "monthly_reserve": "285.0000",
+      "mtbf_hours": "43800.00",
+      "recovery_mttr_hours": "0.2500",
+      "risk_adjusted_tco": "11634.7000"
+    },
+    "on_prem": {
+      "annual_lef": "0.2000",
+      "monthly_reserve": "285.0000",
+      "mtbf_hours": "43800.00",
+      "recovery_mttr_hours": "0.2500",
+      "risk_adjusted_tco": "11634.7000"
+    }
+  },
+  "constitutional_gate": {
+    "is_certified": true,
+    "violations": []
+  },
+  "on_prem_roofline": {
+    "aggregate_throughput_tok_s": "3193.60",
+    "is_memory_bound": false,
+    "is_tpot_sla_met": true,
+    "is_ttft_sla_met": true,
+    "kv_cache_vram_gb": "22.5000",
+    "memory_bus_utilization_ratio": "0.4167",
+    "pipeline_parallel_degree": 1,
+    "required_nodes": 1,
+    "tensor_parallel_degree": 8,
+    "tokens_per_second_per_user": "99.80",
+    "total_gpus": 8,
+    "tpot_ms": "10.02",
+    "ttft_seconds": "0.0864",
+    "vram_utilization_ratio": "0.2422",
+    "weights_vram_gb": "131.5027"
+  },
+  "recommendation": {
+    "archetype": "SOVEREIGN_ON_PREM_BARE_METAL",
+    "base_split_pct": "1.0000",
+    "burst_split_pct": "0.0000",
+    "cloud_score": "33.5000",
+    "divergence_delta": "57.2500",
+    "is_veto_enforced": false,
+    "on_prem_score": "90.7500",
+    "veto_reason_i18n_key": null
+  },
+  "tco_comparison": {
+    "breakdown": {
+      "control_plane": "460.0000",
+      "egress": "322.0000",
+      "hardware_compute": "5462.5000",
+      "oem_support": "1748.0000",
+      "power_cooling": "1489.2000",
+      "rack_colocation": "1500.0000",
+      "storage": "368.0000"
+    },
+    "cloud_monthly": "11098.9720",
+    "cloud_risk_adjusted": "15311.9845",
+    "currency": "EUR",
+    "hybrid_monthly": "11349.7000",
+    "hybrid_risk_adjusted": "11634.7000",
+    "on_prem_monthly": "11349.7000",
+    "on_prem_risk_adjusted": "11634.7000"
+  }
+}

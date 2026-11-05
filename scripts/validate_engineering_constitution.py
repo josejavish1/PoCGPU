@@ -15,7 +15,6 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import unquote, urlsplit
 
-
 DEFAULT_MANIFEST = Path("docs/engineering-constitution/constitution.manifest.json")
 EXTERNAL_LINK_SCHEMES = frozenset({"http", "https", "mailto"})
 
@@ -91,9 +90,10 @@ class ConstitutionValidator:
                 )
                 is_valid = False
         schema_version = self.manifest.get("schema_version")
-        if isinstance(schema_version, str) and re.fullmatch(
-            r"[0-9]+\.[0-9]+\.[0-9]+", schema_version
-        ) is None:
+        if (
+            isinstance(schema_version, str)
+            and re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", schema_version) is None
+        ):
             self.report.add(
                 "MANIFEST_SCHEMA",
                 DEFAULT_MANIFEST,
@@ -352,14 +352,10 @@ class ConstitutionValidator:
                     continue
                 content = self._read_text(path)
                 if content is not None:
-                    matches.extend(
-                        match.group("identifier") for match in pattern.finditer(content)
-                    )
+                    matches.extend(match.group("identifier") for match in pattern.finditer(content))
 
             duplicate_expected = sorted(
-                identifier
-                for identifier, count in Counter(expected).items()
-                if count > 1
+                identifier for identifier, count in Counter(expected).items() if count > 1
             )
             for identifier in duplicate_expected:
                 self.report.add(
@@ -369,9 +365,7 @@ class ConstitutionValidator:
                 )
 
             duplicate_matches = sorted(
-                identifier
-                for identifier, count in Counter(matches).items()
-                if count > 1
+                identifier for identifier, count in Counter(matches).items() if count > 1
             )
             for identifier in duplicate_matches:
                 self.report.add(
@@ -433,8 +427,7 @@ class ConstitutionValidator:
     def _validate_table_contracts(self) -> None:
         allowed_phases = self.manifest["phase_policy"].get("allowed_phases", [])
         if not isinstance(allowed_phases, list) or not all(
-            isinstance(phase, int) and not isinstance(phase, bool)
-            for phase in allowed_phases
+            isinstance(phase, int) and not isinstance(phase, bool) for phase in allowed_phases
         ):
             self.report.add(
                 "MANIFEST_SCHEMA",
@@ -593,9 +586,7 @@ class ConstitutionValidator:
                 return
             start = int(match.group(1))
             end = int(match.group(2) or match.group(1))
-            if start > end or any(
-                phase not in allowed_phases for phase in range(start, end + 1)
-            ):
+            if start > end or any(phase not in allowed_phases for phase in range(start, end + 1)):
                 self.report.add(
                     "INVALID_PHASE",
                     path,
@@ -627,9 +618,7 @@ class ConstitutionValidator:
                 )
         elif constraint_type == "allowed_values":
             values = constraint.get("values")
-            if not isinstance(values, list) or not all(
-                isinstance(item, str) for item in values
-            ):
+            if not isinstance(values, list) or not all(isinstance(item, str) for item in values):
                 self.report.add(
                     "MANIFEST_SCHEMA",
                     DEFAULT_MANIFEST,
@@ -784,9 +773,7 @@ class ConstitutionValidator:
                 )
                 continue
             paths.update(
-                path
-                for path in root.rglob("*")
-                if path.is_file() and path.suffix in extension_set
+                path for path in root.rglob("*") if path.is_file() and path.suffix in extension_set
             )
         return sorted(paths)
 
@@ -1081,9 +1068,7 @@ def main(argv: list[str] | None = None) -> int:
         }
         print(json.dumps(payload, indent=2, sort_keys=True))
     elif report.is_valid:
-        metrics = ", ".join(
-            f"{name}={value}" for name, value in sorted(report.metrics.items())
-        )
+        metrics = ", ".join(f"{name}={value}" for name, value in sorted(report.metrics.items()))
         print(f"PASS: engineering constitution validation completed ({metrics}).")
     else:
         print(

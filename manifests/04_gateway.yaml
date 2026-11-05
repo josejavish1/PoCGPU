@@ -37,7 +37,10 @@ spec:
         - name: POSTGRES_USER
           value: "litellm_admin"
         - name: POSTGRES_PASSWORD
-          value: "tier1_governance_pass"
+          valueFrom:
+            secretKeyRef:
+              name: ai-platform-secrets
+              key: POSTGRES_PASSWORD
         - name: PGDATA
           value: "/var/lib/postgresql/data/pgdata"
         volumeMounts:
@@ -78,7 +81,7 @@ metadata:
 data:
   config.yaml: |
     model_list:
-      # --- SERVIDOR GPU 1 (Node 1 - 2x L4) ---
+      # --- GPU SERVER 1 (Node 1 - 2x L4) ---
       - model_name: light-model-fast
         litellm_params:
           model: openai/mistral-base
@@ -86,7 +89,7 @@ data:
           api_key: "none"
           timeout: 15
         model_info:
-          id: "servidor-gpu-1"
+          id: "gpu-server-1"
 
       - model_name: light-model-coder
         litellm_params:
@@ -95,7 +98,7 @@ data:
           api_key: "none"
           timeout: 15
         model_info:
-          id: "servidor-gpu-1"
+          id: "gpu-server-1"
 
       - model_name: reasoning-model
         litellm_params:
@@ -104,9 +107,9 @@ data:
           api_key: "none"
           timeout: 20
         model_info:
-          id: "servidor-gpu-1"
+          id: "gpu-server-1"
 
-      # --- SERVIDOR GPU 2 (Node 2 - 2x L4) ---
+      # --- GPU SERVER 2 (Node 2 - 2x L4) ---
       - model_name: light-model-fast
         litellm_params:
           model: openai/mistral-base
@@ -114,7 +117,7 @@ data:
           api_key: "none"
           timeout: 15
         model_info:
-          id: "servidor-gpu-2"
+          id: "gpu-server-2"
 
       - model_name: light-model-coder
         litellm_params:
@@ -123,7 +126,7 @@ data:
           api_key: "none"
           timeout: 15
         model_info:
-          id: "servidor-gpu-2"
+          id: "gpu-server-2"
 
       - model_name: reasoning-model
         litellm_params:
@@ -132,9 +135,9 @@ data:
           api_key: "none"
           timeout: 20
         model_info:
-          id: "servidor-gpu-2"
+          id: "gpu-server-2"
 
-      # --- DESBORDE EN LA NUBE (Google Cloud Gemini) ---
+      # --- CLOUD OVERFLOW (Google Cloud Gemini) ---
       - model_name: gemini-cloud-backup
         litellm_params:
           model: openai/gemini-2.5-flash
@@ -145,8 +148,8 @@ data:
           id: "google-gemini-cloud"
 
     general_settings:
-      master_key: "sk-tier1-master-governance-key-2026"
-      database_url: "postgresql://litellm_admin:tier1_governance_pass@litellm-db-svc:5432/litellm"
+      master_key: os.environ/LITELLM_MASTER_KEY
+      database_url: os.environ/DATABASE_URL
 
     litellm_settings:
       cache: true
@@ -191,9 +194,15 @@ spec:
         - "--port=4000"
         env:
         - name: LITELLM_MASTER_KEY
-          value: "sk-tier1-master-governance-key-2026"
+          valueFrom:
+            secretKeyRef:
+              name: ai-platform-secrets
+              key: LITELLM_MASTER_KEY
         - name: DATABASE_URL
-          value: "postgresql://litellm_admin:tier1_governance_pass@litellm-db-svc:5432/litellm"
+          valueFrom:
+            secretKeyRef:
+              name: ai-platform-secrets
+              key: DATABASE_URL
         - name: GEMINI_API_KEY
           valueFrom:
             secretKeyRef:

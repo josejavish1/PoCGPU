@@ -1,22 +1,35 @@
 {
   "schema_version": "1.0.0",
-  "governance_phase": 0,
+  "governance_phase": 1,
   "repository_baseline": {
     "branch": "origin/main",
     "commit": "eda8c880ba94b4922b4e70cbb0331542ae4884f9"
   },
   "enforcement": {
     "required_files": [
+      ".python-version",
+      "pyproject.toml",
+      "uv.lock",
       ".github/workflows/engineering-governance.yml",
       "docs/engineering-constitution/constitution.manifest.json",
       "scripts/validate_engineering_constitution.py",
-      "tests/governance/test_engineering_constitution.py"
+      "scripts/validate_mutation_adjudications.py",
+      "tests/governance/test_engineering_constitution.py",
+      "tests/phase1/mutation-adjudications.json"
     ],
     "ci_workflow": ".github/workflows/engineering-governance.yml",
     "required_ci_commands": [
+      "uv sync --frozen",
+      "uv lock --check",
+      "uv run ruff check src/pocgpu tests/phase1 tests/build tests/migration",
+      "uv run mypy src/pocgpu tests/phase1",
+      "uv run pytest tests/build tests/migration tests/phase1 --cov=pocgpu.domain --cov-branch",
+      "uv run mutmut run",
+      "uv run python scripts/validate_mutation_adjudications.py",
+      "uv build --no-sources",
+      "uv run pip-audit --local --progress-spinner off",
       "python3 scripts/validate_engineering_constitution.py",
-      "python3 -m unittest discover -s tests/governance -p 'test_*.py'",
-      "python3 tests/architecture/test_zero_spanish_literals.py"
+      "python3 -m unittest discover -s tests/governance -p 'test_*.py'"
     ]
   },
   "constitution": {
@@ -63,6 +76,25 @@
           "## Risk controls",
           "## Acceptance criteria",
           "## Stop conditions"
+        ]
+      },
+      {
+        "path": "PHASE_1_COMPLETION_REPORT.md",
+        "required_headings": [
+          "# Phase 1 Completion Report",
+          "## Status",
+          "## Evidence",
+          "## Acceptance review"
+        ]
+      },
+      {
+        "path": "PHASE_1_MUTATION_REPORT.md",
+        "required_headings": [
+          "# Phase 1 Mutation Report",
+          "## Scope",
+          "## Result",
+          "## Formal adjudication",
+          "## Decision"
         ]
       },
       {
@@ -545,60 +577,7 @@
     ],
     "legacy_ratchet": {
       "expires_before_phase": 1,
-      "files": [
-        {
-          "path": "scripts/benchmark.py",
-          "sha256": "1f89b93a7b91786cdf3b39fffbdc9cc167369efc063aa6f9ada46cc6e1de4c12"
-        },
-        {
-          "path": "scripts/classify_incident.py",
-          "sha256": "b0f277c9ca89cff7a246f21be1ec4bdccbbd296fe4199acde7ce44e6266a70b1"
-        },
-        {
-          "path": "scripts/enrich_enterprise_metrics.py",
-          "sha256": "0ee203f4518adb82ac5b0c0c068642d9755058223c2dd418e72a21ff9704e504"
-        },
-        {
-          "path": "scripts/finops_calculator.py",
-          "sha256": "a21af1e8c231ff4631073a455428d3fa5a5be1f2e2c537aba2c6649ae14c2181"
-        },
-        {
-          "path": "scripts/ide_copilot_simulator.py",
-          "sha256": "5367b96b8c553a6d2469f0df33c9174264fe1d0c1dccc6d0ce991f92c296b050"
-        },
-        {
-          "path": "scripts/interactive_chat.py",
-          "sha256": "5ea0ecc0ca683f9b699f67f033a6959d46839b54a1efc96b0d2eeb1b46ee40a5"
-        },
-        {
-          "path": "scripts/saturation_probe.py",
-          "sha256": "1829ef14ea867e799ef2163bd07bceac1aa963fcde8d03852820a723aca3d1a8"
-        },
-        {
-          "path": "scripts/seed_enterprise_demo.py",
-          "sha256": "3b93afceefccd1b70d6d90b6a8665bfa4093b164704bc96cbfa3ccd80c13529d"
-        },
-        {
-          "path": "scripts/simulate_enterprise_governance.py",
-          "sha256": "ef31240e0cfc3ea8ca4d4f418dec736b892ab3fafe2512cb85f3360680e9a63e"
-        },
-        {
-          "path": "scripts/verify_balanced_saturation.py",
-          "sha256": "86898577100806eb80c272b011aa3bc06a5a56b394ad3de81b52b482ac5a19dc"
-        },
-        {
-          "path": "tests/architecture/test_zero_spanish_literals.py",
-          "sha256": "5e115ab1da830d4d86f9d2b3f71e3ae35f1df3f5f26d93f4b7b0f248d7cf2e00"
-        },
-        {
-          "path": "manifests/07_observability_and_alerts.yaml",
-          "sha256": "af624f83e881b3282100741fcb0acf63c11ccd977d3b1ca0b0e8a62d1c568723"
-        },
-        {
-          "path": "manifests/08_grafana_prometheus.yaml",
-          "sha256": "dd97cea4ecd565e4210b8903e8e4a0c8e9cd83fdd086d53246676421975ccffc"
-        }
-      ]
+      "files": []
     }
   }
 }

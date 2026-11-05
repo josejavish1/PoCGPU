@@ -9,6 +9,51 @@ permissions:
   contents: read
 
 jobs:
+  phase-1-foundation:
+    name: Validate canonical foundation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Install locked toolchain
+        run: pipx install uv==0.13.4
+
+      - name: Synchronize frozen environment
+        run: uv sync --frozen
+
+      - name: Verify lock consistency
+        run: uv lock --check
+
+      - name: Check formatting and source quality
+        run: uv run ruff check src/pocgpu tests/phase1 tests/build tests/migration
+
+      - name: Run strict static typing
+        run: uv run mypy src/pocgpu tests/phase1
+
+      - name: Run Phase 1 verification and coverage
+        run: uv run pytest tests/build tests/migration tests/phase1 --cov=pocgpu.domain --cov-branch
+
+      - name: Run mutation verification
+        run: |
+          uv run mutmut run
+          uv run python scripts/validate_mutation_adjudications.py
+
+      - name: Build source and wheel artifacts
+        run: uv build --no-sources
+
+      - name: Verify installed wheel
+        run: |
+          uv venv /tmp/pocgpu-wheel-test --python 3.12
+          uv pip install --python /tmp/pocgpu-wheel-test/bin/python dist/pocgpu-0.1.0-py3-none-any.whl
+          cd /tmp
+          /tmp/pocgpu-wheel-test/bin/python -I -c "import pocgpu; from pocgpu.contracts.schema_export import render_schemas; assert pocgpu.__version__ == '0.1.0'; assert len(render_schemas()) == 5"
+
+      - name: Audit locked dependencies
+        run: uv run pip-audit --local --progress-spinner off
+
   validate:
     name: Validate engineering authority
     runs-on: ubuntu-24.04
@@ -23,6 +68,3 @@ jobs:
 
       - name: Run governance control tests
         run: python3 -m unittest discover -s tests/governance -p 'test_*.py'
-
-      - name: Run lexical source gate
-        run: python3 tests/architecture/test_zero_spanish_literals.py

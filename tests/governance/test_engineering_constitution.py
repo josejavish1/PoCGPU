@@ -11,7 +11,6 @@ from typing import Any
 
 from scripts.validate_engineering_constitution import validate_repository
 
-
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 MANIFEST_PATH = Path("governance/constitution.manifest.json")
 
@@ -22,10 +21,7 @@ class EngineeringConstitutionTests(unittest.TestCase):
 
         self.assertTrue(
             report.is_valid,
-            "\n".join(
-                f"{issue.code}: {issue.path}: {issue.message}"
-                for issue in report.issues
-            ),
+            "\n".join(f"{issue.code}: {issue.path}: {issue.message}" for issue in report.issues),
         )
 
     def test_missing_document_is_rejected(self) -> None:
@@ -152,9 +148,7 @@ class EngineeringConstitutionTests(unittest.TestCase):
                 {
                     "name": "governance_records",
                     "path_glob": "governance/records.md",
-                    "declaration_pattern": (
-                        r"^\| (?P<identifier>GOV-[0-9]{3}) \|"
-                    ),
+                    "declaration_pattern": (r"^\| (?P<identifier>GOV-[0-9]{3}) \|"),
                     "expected_identifiers": ["GOV-001"],
                 }
             ],
@@ -165,9 +159,7 @@ class EngineeringConstitutionTests(unittest.TestCase):
                     "registry": "governance_records",
                     "key_column": "ID",
                     "required_columns": ["ID", "Status", "Planned phase"],
-                    "constraints": [
-                        {"column": "Planned phase", "type": "phase_range"}
-                    ],
+                    "constraints": [{"column": "Planned phase", "type": "phase_range"}],
                 }
             ],
             "phase_policy": {"allowed_phases": [0, 1]},

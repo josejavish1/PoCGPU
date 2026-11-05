@@ -1,0 +1,33 @@
+{
+  "cases": [
+    {
+      "case_id": "legacy-simple-cli-explicit-inputs",
+      "disposition": "REJECTED",
+      "output_path": "tests/fixtures/migration/legacy_simple_cli.stdout.txt",
+      "output_sha256": "8280a10320e5e2acf29dd77a92255142722f2ebd21e71b87d8178fa3961978c1",
+      "reason_code": "UNVERIFIED_THEORY_AND_MARKUP_MISLABELING",
+      "source_path": "scripts/finops_calculator.py",
+      "source_sha256": "a21af1e8c231ff4631073a455428d3fa5a5be1f2e2c537aba2c6649ae14c2181"
+    },
+    {
+      "case_id": "legacy-tier1-cli-explicit-inputs",
+      "disposition": "DEFERRED",
+      "output_path": "tests/fixtures/migration/legacy_tier1_cli.output.json",
+      "output_sha256": "3f8f5ec75be5e1c66ca70390fd179f54f684e08ddb573089aed385e3e691b59d",
+      "reason_code": "FORMULAS_REQUIRE_PHASE_2_TO_5_REPLACEMENT",
+      "source_path": "scripts/finops_tier1_engine.py",
+      "source_sha256": "79f31517f080f0402db7a590a463d6e458ee247a0e91011b414d5372f7b8db56"
+    },
+    {
+      "case_id": "legacy-advisor-enterprise-scenario",
+      "disposition": "DEFERRED",
+      "output_path": "tests/fixtures/migration/legacy_advisor.stable-output.json",
+      "output_sha256": "23b9aea0927acdd2d9deb3b11dc2a4758eaab8fc469a523da2e2ad329513d2ae",
+      "reason_code": "MIXED_VALID_AND_DEFECTIVE_OUTPUTS_REQUIRE_PHASED_REPLACEMENT",
+      "source_path": "src/application/finops_advisor_service.py",
+      "source_sha256": "cc6b8badaf9b7b9bcef74cef083d6ef0b31fdbb11fa3a47cc122279685ec99a1"
+    }
+  ],
+  "runtime_baseline_commit": "eda8c880ba94b4922b4e70cbb0331542ae4884f9",
+  "schema_version": "1.0.0"
+}

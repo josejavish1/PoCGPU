@@ -1,0 +1,169 @@
+{
+  "$defs": {
+    "CanonicalJsonScalar": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "CanonicalJsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CanonicalJsonScalar"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/CanonicalJsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/CanonicalJsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "IssueContract": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "localization_key": {
+          "title": "Localization Key",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/CanonicalJsonScalar"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "path": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Path",
+          "type": "array"
+        },
+        "severity": {
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "kind",
+        "severity",
+        "path",
+        "parameters",
+        "localization_key"
+      ],
+      "title": "IssueContract",
+      "type": "object"
+    },
+    "ResultSectionContract": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "values": {
+          "additionalProperties": {
+            "$ref": "#/$defs/CanonicalJsonValue"
+          },
+          "title": "Values",
+          "type": "object"
+        }
+      },
+      "required": [
+        "domain",
+        "values"
+      ],
+      "title": "ResultSectionContract",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "engine_id": {
+      "title": "Engine Id",
+      "type": "string"
+    },
+    "engine_version": {
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "evaluated_at": {
+      "title": "Evaluated At",
+      "type": "string"
+    },
+    "issues": {
+      "items": {
+        "$ref": "#/$defs/IssueContract"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "scenario_id": {
+      "title": "Scenario Id",
+      "type": "string"
+    },
+    "scenario_revision": {
+      "title": "Scenario Revision",
+      "type": "integer"
+    },
+    "sections": {
+      "items": {
+        "$ref": "#/$defs/ResultSectionContract"
+      },
+      "title": "Sections",
+      "type": "array"
+    },
+    "snapshot_hash": {
+      "title": "Snapshot Hash",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "state": {
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "scenario_id",
+    "scenario_revision",
+    "snapshot_id",
+    "snapshot_hash",
+    "engine_id",
+    "engine_version",
+    "state",
+    "issues",
+    "sections",
+    "evaluated_at"
+  ],
+  "title": "CanonicalResultContract",
+  "type": "object"
+}

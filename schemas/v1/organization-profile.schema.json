@@ -1,0 +1,56 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "context_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Context Ids",
+      "type": "array"
+    },
+    "display_name": {
+      "title": "Display Name",
+      "type": "string"
+    },
+    "jurisdiction_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Jurisdiction Ids",
+      "type": "array"
+    },
+    "locale_preferences": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Locale Preferences",
+      "type": "array"
+    },
+    "organization_id": {
+      "title": "Organization Id",
+      "type": "string"
+    },
+    "policy_pack_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Policy Pack Ids",
+      "type": "array"
+    },
+    "tenant_id": {
+      "title": "Tenant Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tenant_id",
+    "organization_id",
+    "display_name",
+    "policy_pack_ids",
+    "locale_preferences",
+    "jurisdiction_ids",
+    "context_ids"
+  ],
+  "title": "OrganizationProfileContract",
+  "type": "object"
+}

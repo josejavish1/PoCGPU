@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "equivalent_survivors": [
+    "pocgpu.domain.numeric.x_canonical_decimal__mutmut_15",
+    "pocgpu.domain.numeric.x_canonical_decimal__mutmut_23",
+    "pocgpu.domain.numeric.x_canonical_decimal__mutmut_24",
+    "pocgpu.domain.numeric.x|RoundingPolicy|apply__mutmut_11",
+    "pocgpu.domain.serialization.x__canonical_timestamp__mutmut_16",
+    "pocgpu.domain.serialization.x__canonical_timestamp__mutmut_17",
+    "pocgpu.domain.serialization.x__canonical_timestamp__mutmut_19",
+    "pocgpu.domain.serialization.x__canonical_timestamp__mutmut_27",
+    "pocgpu.domain.serialization.x__canonicalize__mutmut_58",
+    "pocgpu.domain.serialization.x__canonicalize__mutmut_59",
+    "pocgpu.domain.serialization.x__canonicalize__mutmut_60",
+    "pocgpu.domain.serialization.x__canonicalize__mutmut_63",
+    "pocgpu.domain.serialization.x__canonicalize__mutmut_64",
+    "pocgpu.domain.serialization.x__canonicalize__mutmut_66",
+    "pocgpu.domain.serialization.x__canonicalize__mutmut_67",
+    "pocgpu.domain.serialization.x__canonicalize__mutmut_68",
+    "pocgpu.domain.serialization.x_canonical_json_bytes__mutmut_11",
+    "pocgpu.domain.serialization.x_canonical_json_bytes__mutmut_12",
+    "pocgpu.domain.serialization.x_canonical_json_bytes__mutmut_17",
+    "pocgpu.domain.serialization.x_canonical_json_bytes__mutmut_21",
+    "pocgpu.domain.serialization.x_canonical_json_bytes__mutmut_26"
+  ]
+}

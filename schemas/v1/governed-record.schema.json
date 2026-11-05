@@ -1,0 +1,184 @@
+{
+  "$defs": {
+    "CanonicalJsonScalar": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "CanonicalJsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CanonicalJsonScalar"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/CanonicalJsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/CanonicalJsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "ProvenanceContract": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_state": {
+          "title": "Approval State",
+          "type": "string"
+        },
+        "collection_method": {
+          "title": "Collection Method",
+          "type": "string"
+        },
+        "evidence_class": {
+          "title": "Evidence Class",
+          "type": "string"
+        },
+        "formula_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Formula Id"
+        },
+        "observed_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Observed At"
+        },
+        "owner_organization_id": {
+          "title": "Owner Organization Id",
+          "type": "string"
+        },
+        "owner_role_id": {
+          "title": "Owner Role Id",
+          "type": "string"
+        },
+        "quality_status": {
+          "title": "Quality Status",
+          "type": "string"
+        },
+        "record_id": {
+          "title": "Record Id",
+          "type": "string"
+        },
+        "revision": {
+          "title": "Revision",
+          "type": "integer"
+        },
+        "schema_id": {
+          "title": "Schema Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Id"
+        },
+        "source_record_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Record Ids",
+          "type": "array"
+        },
+        "supersedes_record_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Supersedes Record Id"
+        },
+        "tenant_id": {
+          "title": "Tenant Id",
+          "type": "string"
+        },
+        "valid_from": {
+          "title": "Valid From",
+          "type": "string"
+        },
+        "valid_until": {
+          "title": "Valid Until",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "record_id",
+        "schema_id",
+        "schema_version",
+        "revision",
+        "evidence_class",
+        "source_id",
+        "observed_at",
+        "valid_from",
+        "valid_until",
+        "owner_organization_id",
+        "owner_role_id",
+        "quality_status",
+        "collection_method",
+        "formula_id",
+        "approval_state",
+        "supersedes_record_id",
+        "source_record_ids"
+      ],
+      "title": "ProvenanceContract",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "$ref": "#/$defs/ProvenanceContract"
+    },
+    "value": {
+      "$ref": "#/$defs/CanonicalJsonValue"
+    }
+  },
+  "required": [
+    "metadata",
+    "value"
+  ],
+  "title": "GovernedRecordContract",
+  "type": "object"
+}
