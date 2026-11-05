@@ -4,9 +4,9 @@ PoCGPU is a governed foundation for a universal AI infrastructure economics calc
 
 ## Current status
 
-Phase 0 established the [Engineering Constitution](docs/engineering-constitution/README.md). Phase 1 implementation is in progress against the reviewed [Phase 1 plan](docs/engineering-constitution/PHASE_1_PLAN.md).
+Phase 0 established the [Engineering Constitution](docs/engineering-constitution/README.md). Phase 1 is complete with its evidence recorded in the [Phase 1 completion report](docs/engineering-constitution/PHASE_1_COMPLETION_REPORT.md). The independent plans for phases 2 through 8 are published as drafts under the [delivery roadmap](docs/engineering-constitution/DELIVERY_ROADMAP.md) and require review and acceptance before implementation.
 
-The Phase 1 foundation intentionally does not implement capacity, TCO, unit economics, pricing, or external comparison formulas. Requests for these later-phase domains fail closed with a structured `OUTPUT_DOMAIN_UNAVAILABLE` issue. Existing calculator outputs are retained only as migration evidence and are not correctness oracles.
+The current foundation intentionally does not implement capacity, TCO, unit economics, pricing, or external comparison formulas. Requests for these later-phase domains fail closed with a structured `OUTPUT_DOMAIN_UNAVAILABLE` issue. Existing calculator outputs are retained only as migration evidence and are not correctness oracles.
 
 ## Canonical package
 

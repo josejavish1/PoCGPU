@@ -98,6 +98,130 @@
         ]
       },
       {
+        "path": "DELIVERY_ROADMAP.md",
+        "required_headings": [
+          "# Delivery Roadmap: Phases 0-8",
+          "## Status",
+          "## Global execution protocol",
+          "## Phase sequence",
+          "## Cross-phase invariants",
+          "## Review gates",
+          "## Program completion"
+        ]
+      },
+      {
+        "path": "PHASE_2_PLAN.md",
+        "required_headings": [
+          "# Phase 2 Plan: Benchmark-Backed Capacity and Physical Sizing",
+          "## Status",
+          "## Objective",
+          "## Entry conditions",
+          "## Scope",
+          "## Decisions required before implementation",
+          "## Formula contracts",
+          "## Test-first verification matrix",
+          "## Delivery increments",
+          "## Acceptance criteria",
+          "## Stop conditions"
+        ]
+      },
+      {
+        "path": "PHASE_3_PLAN.md",
+        "required_headings": [
+          "# Phase 3 Plan: Fully Loaded TCO and Accounting Views",
+          "## Status",
+          "## Objective",
+          "## Entry conditions",
+          "## Scope",
+          "## Decisions required before implementation",
+          "## Formula contracts",
+          "## Test-first verification matrix",
+          "## Delivery increments",
+          "## Acceptance criteria",
+          "## Stop conditions"
+        ]
+      },
+      {
+        "path": "PHASE_4_PLAN.md",
+        "required_headings": [
+          "# Phase 4 Plan: Unit Economics and Gross-Margin Pricing",
+          "## Status",
+          "## Objective",
+          "## Entry conditions",
+          "## Scope",
+          "## Decisions required before implementation",
+          "## Formula contracts",
+          "## Test-first verification matrix",
+          "## Delivery increments",
+          "## Acceptance criteria",
+          "## Stop conditions"
+        ]
+      },
+      {
+        "path": "PHASE_5_PLAN.md",
+        "required_headings": [
+          "# Phase 5 Plan: External Comparison, Break-Even, and Hybrid Cost",
+          "## Status",
+          "## Objective",
+          "## Entry conditions",
+          "## Scope",
+          "## Decisions required before implementation",
+          "## Formula contracts",
+          "## Test-first verification matrix",
+          "## Delivery increments",
+          "## Acceptance criteria",
+          "## Stop conditions"
+        ]
+      },
+      {
+        "path": "PHASE_6_PLAN.md",
+        "required_headings": [
+          "# Phase 6 Plan: Decision Analysis and Result Certification",
+          "## Status",
+          "## Objective",
+          "## Entry conditions",
+          "## Scope",
+          "## Decisions required before implementation",
+          "## Orchestration contracts",
+          "## Test-first verification matrix",
+          "## Delivery increments",
+          "## Acceptance criteria",
+          "## Stop conditions"
+        ]
+      },
+      {
+        "path": "PHASE_7_PLAN.md",
+        "required_headings": [
+          "# Phase 7 Plan: Interfaces, Exports, and Internationalization",
+          "## Status",
+          "## Objective",
+          "## Entry conditions",
+          "## Scope",
+          "## Decisions required before implementation",
+          "## Interface contracts",
+          "## Test-first verification matrix",
+          "## Delivery increments",
+          "## Acceptance criteria",
+          "## Stop conditions"
+        ]
+      },
+      {
+        "path": "PHASE_8_PLAN.md",
+        "required_headings": [
+          "# Phase 8 Plan: Production Hardening and Release Evidence",
+          "## Status",
+          "## Objective",
+          "## Entry conditions",
+          "## Scope",
+          "## Decisions required before implementation",
+          "## Supply-chain and build gates",
+          "## Test-first verification matrix",
+          "## Delivery increments",
+          "## Acceptance criteria",
+          "## Stop conditions"
+        ]
+      },
+      {
         "path": "PRODUCT_CONSTITUTION.md",
         "required_headings": [
           "# Product Constitution",
