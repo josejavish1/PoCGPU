@@ -11,6 +11,8 @@ This directory contains the declarative manifests and operational runbooks for t
 
 ```text
 pocs/elastic-multi-gpu-inference/
+├── ACCESS_AND_CREDENTIALS.md     # Direct access URLs, passwords, API keys, and models
+├── README.md                    # PoC architecture overview and topology
 ├── manifests/                    # Declarative Kubernetes manifests
 │   ├── 01_gpu_audit.yaml        # GPU interconnect audit and bandwidth test
 │   ├── 02_storage.yaml          # Base PVC and Safetensors preload job
@@ -32,7 +34,8 @@ pocs/elastic-multi-gpu-inference/
 │   ├── 06_GUIA_PRACTICA_POC_SATURACION.md
 │   ├── 07_VARIANTE_MINIMO_COSTE_SPOT_MISTRAL.md
 │   └── 08_ESTADO_ZURICH_Y_OPERACIONES.md
-└── scripts/                     # Cluster load testing, benchmark, and probes
+└── scripts/                     # Automation, testing, and benchmark scripts
+    ├── up_and_verify.py         # Automated startup, health check & Playwright E2E audit
     ├── benchmark.py             # Mixed concurrency benchmark (TTFT, TPOT)
     ├── saturation_probe.py      # KV Cache extreme saturation tester
     ├── seed_enterprise_demo.py  # Seed departments, budgets, and keys
@@ -41,7 +44,13 @@ pocs/elastic-multi-gpu-inference/
 
 ## Fast Operations
 
-### Reactivation
+### 1-Click Automated Startup & E2E Verification (Recommended)
+```bash
+python3 pocs/elastic-multi-gpu-inference/scripts/up_and_verify.py
+```
+*Resizes cluster to 4x GPUs, verifies tunnels, runs local and cloud-burst inference, executes Playwright visual proofs, and prints an executive diagnostic report.*
+
+### Manual Reactivation
 ```bash
 gcloud container clusters resize poc-gpu-cluster-ch --node-pool=default-pool --num-nodes=1 --zone=europe-west6-b --quiet
 gcloud container clusters resize poc-gpu-cluster-ch --node-pool=gpu-pool --num-nodes=2 --zone=europe-west6-b --quiet
