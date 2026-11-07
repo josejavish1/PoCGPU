@@ -8,6 +8,16 @@ Phase 0 established the [Engineering Constitution](docs/engineering-constitution
 
 The current foundation intentionally does not implement capacity, TCO, unit economics, pricing, or external comparison formulas. Requests for these later-phase domains fail closed with a structured `OUTPUT_DOMAIN_UNAVAILABLE` issue. Existing calculator outputs are retained only as migration evidence and are not correctness oracles.
 
+## Repository structure
+
+- `pocs/`: Declarative cloud PoC infrastructure environments (e.g. `pocs/gke-vllm-zurich/` containing Kubernetes manifests and operational runbooks).
+- `calculators/`: Decoupled calculators for Silicon Sizing (`calculators/sizing/`) and Chargeback/TCO (`calculators/chargeback/`), with domain specifications under `calculators/docs/`.
+- `src/pocgpu/`: Canonical calculation engine and shared kernel (domain primitives, exact numeric models, and evaluation pipelines).
+- `config/`: Governed catalogs for hardware, pricing, models, and taxonomies.
+- `schemas/`: Versioned canonical boundary schemas.
+- `docs/`: Engineering constitution and architecture decision records.
+- `tests/`: Governed verification suites across delivery phases.
+
 ## Canonical package
 
 All new executable product code is under `src/pocgpu`:

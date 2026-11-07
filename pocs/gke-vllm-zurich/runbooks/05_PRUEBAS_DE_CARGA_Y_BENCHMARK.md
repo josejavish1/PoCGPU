@@ -42,10 +42,10 @@ kubectl exec -it deployment/vllm-inference-engine -c vllm-server -- curl -s http
 
 ## 4. Ejecución del Benchmark de Concurrencia Mixta
 
-Ejecute el script automatizado ubicado en `scripts/benchmark.py`:
+Ejecute el script automatizado ubicado en `pocs/gke-vllm-zurich/scripts/benchmark.py`:
 
 ```bash
-python3 /home/jsanchhi/PoCGPU/scripts/benchmark.py \
+python3 pocs/gke-vllm-zurich/scripts/benchmark.py \
   --url http://localhost:4000 \
   --key sk-tier1-master-governance-key-2026 \
   --concurrency 12 \

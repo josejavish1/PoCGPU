@@ -11,10 +11,10 @@ El Enterprise AI Gateway (LiteLLM Proxy / Envoy / Kong) desacopla a los clientes
 
 ## 2. Despliegue del Gateway
 
-Aplique el manifiesto ubicado en `manifests/04_gateway.yaml`:
+Aplique el manifiesto ubicado en `pocs/gke-vllm-zurich/manifests/04_gateway.yaml`:
 
 ```bash
-kubectl apply -f /home/jsanchhi/PoCGPU/manifests/04_gateway.yaml
+kubectl apply -f pocs/gke-vllm-zurich/manifests/04_gateway.yaml
 ```
 
 Verifique que las 2 réplicas del Gateway estén en ejecución:

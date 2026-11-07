@@ -39,43 +39,42 @@ Queda terminantemente prohibido proponer o implementar las siguientes soluciones
 /home/jsanchhi/PoCGPU/
 ├── README.md                           # Índice general, objetivos y arquitectura consolidada
 ├── CONTEXTO_IA.md                      # [ESTE ARCHIVO] Memoria operativa para agentes IA
-├── 00_ARQUITECTURA_Y_PRINCIPIOS.md     # Teoría, diccionario infra->IA y comparativa SOTA
-├── 01_VALIDACION_HARDWARE_Y_FABRIC.md  # Procedimiento de auditoría de enlaces PCIe/NVLink y NCCL
-├── 02_STORAGE_Y_PESOS.md               # Gestión de Safetensors, cuotas de VRAM y precarga de pesos
-├── 03_DESPLIEGUE_MOTOR_VLLM_TP2.md     # Manifiesto y lifecycle del motor distribuido vLLM con TP=2
-├── 04_ENTERPRISE_AI_GATEWAY.md         # Manifiesto del Gateway LiteLLM en CPU y rutas OpenAPI
-├── 05_PRUEBAS_DE_CARGA_Y_BENCHMARK.md  # Metodología de benchmarking (TTFT, TPOT, VRAM) y Quality Gates
-├── 06_GUIA_PRACTICA_POC_SATURACION.md  # Procedimiento de emisión de API Keys y pruebas de saturación
-├── 07_VARIANTE_MINIMO_COSTE_SPOT_MISTRAL.md # Configuración de coste mínimo en GCP Spot con Mistral-7B
-├── 08_ESTADO_ZURICH_Y_OPERACIONES.md   # Guía operativa: Reactivación, hibernación, credenciales y URLs
-├── 09_MODELO_FINOPS_CALCULADORA.md     # Especificación FinOps: Sizing de hardware, Roofline y chargeback
-├── 10_BACKLOG_FINOPS_INSTITUCIONAL.md  # Backlog técnico Tier-1: Primitivas neurosimbólicas y hoja de ruta
-├── docs/RFC_063_UNIVERSAL_HYBRID_FINOPS_ADVISOR_ARGON.md # Master Blueprint: Universal Hybrid FinOps Advisor (gemini-4-argon)
-├── docs/RFC_064_PHASE2_DOMAIN_SERVICES_SPECIFICATION_ARGON.md # Phase 2 Technical Specification: Pure Domain Services (gemini-4-argon)
-├── docs/RFC_065_ZERO_DEFECT_ZERO_HARDCODING_MASTER_PLAN_ARGON.md # Master Quality Plan: Universal Zero-Defect & Zero-Hardcoding (gemini-4-argon)
-├── manifests/
-│   ├── 01_gpu_audit.yaml               # Pod temporal para auditar topología P2P y ancho de banda NCCL
-│   ├── 02_storage.yaml                 # PVC genérico y Job preloader de almacenamiento
-│   ├── 02_storage_zurich.yaml          # PVC vinculado al disco persistente en Zúrich (Servidor 1)
-│   ├── 02_storage_replica2.yaml        # PVC vinculado al disco persistente en Zúrich (Servidor 2)
-│   ├── 03_vllm_service.yaml            # Deployment del Servidor 1 de vLLM (TP=2, 2x L4) + Service
-│   ├── 03_vllm_replica2.yaml           # Deployment del Servidor 2 de vLLM (TP=2, 2x L4) + Service
-│   ├── 04_gateway.yaml                 # Deployment de LiteLLM Gateway L7 + PostgreSQL + ConfigMap
-│   ├── 05_linux_client.yaml            # Pod cliente Linux in-cluster para pruebas de latencia interna
-│   ├── 06_openwebui.yaml               # Deployment de OpenWebUI + PVC de configuración y cuentas
-│   ├── 07_observability_and_alerts.yaml# Reglas de alerta Prometheus y exportadores vLLM
-│   └── 08_grafana_prometheus.yaml      # Stack Prometheus + Grafana con dashboard empresarial
-└── scripts/
-    ├── benchmark.py                    # Suite asíncrona de pruebas de carga con streaming (httpx)
-    ├── classify_incident.py            # Validador de inferencia de incidentes con adaptador LoRA
-    ├── enrich_enterprise_metrics.py    # Inyector de tráfico sintético para métricas en Grafana
-    ├── finops_tier1_engine.py          # Motor FinOps Tier-1: Planificador de capacidad, Roofline y TCO
-    ├── ide_copilot_simulator.py        # Simulador de peticiones concurrentes de IDE Continue.dev
-    ├── interactive_chat.py             # Cliente CLI interactivo con métricas de streaming y TTFT
-    ├── saturation_probe.py             # Sonda de saturación extrema de KV Cache y PagedAttention
-    ├── seed_enterprise_demo.py         # Poblador de departamentos, cuotas y usuarios en PostgreSQL
-    ├── simulate_enterprise_governance.py # Validador de políticas de cuota presupuestaria y RPM
-    └── verify_balanced_saturation.py   # Verificador de balanceo de carga Activo-Activo entre réplicas
+├── pyproject.toml                      # Definición de paquete y dependencias fijadas
+├── uv.lock                             # Grafo completo de dependencias deterministas
+│
+├── pocs/                               # Entorno declarativo para PoCs de infraestructura Cloud/K8s
+│   ├── README.md                       # Índice y guía de adición de nuevas PoCs
+│   └── gke-vllm-zurich/                # PoC clúster GKE Zúrich (4x L4 GPUs, TP=2, LiteLLM)
+│       ├── README.md                   # Topología y comandos de arranque/hibernación
+│       ├── manifests/                  # Manifiestos de Kubernetes (vLLM, Gateway, OpenWebUI)
+│       └── runbooks/                   # Guías operativas paso a paso (00_ a 08_)
+│
+├── calculators/                        # Calculadoras FinOps desacopladas
+│   ├── README.md                       # Índice y principios de desacoplamiento
+│   ├── docs/                           # Especificaciones matemáticas de Sizing y Chargeback
+│   │   ├── 09_MODELO_FINOPS_CALCULADORA.md
+│   │   └── 10_BACKLOG_FINOPS_INSTITUCIONAL.md
+│   ├── sizing/                         # Calculadora A: Sizing y Física del Silicio (VRAM, Roofline)
+│   │   ├── README.md
+│   │   ├── src/
+│   │   └── tests/
+│   └── chargeback/                     # Calculadora B: Chargeback y TCO ($/Token, Amortización)
+│       ├── README.md
+│       ├── src/
+│       └── tests/
+│
+├── src/pocgpu/                         # Motor canónico y Shared Kernel (paquete distribuible)
+│   ├── domain/                         # Primitivas puras, ExactNumber, Money, Capacidad, TCO, Economics
+│   ├── application/                    # Orquestadores y servicios de evaluación
+│   ├── contracts/                      # Esquemas de frontera y DTOs de intercambio
+│   ├── adapters/                       # Adaptadores de persistencia y catálogo
+│   └── composition.py                  # Ensamblaje canónico
+│
+├── config/                             # Catálogos gobernados (hardware, modelos, pricing)
+├── schemas/                            # Esquemas canónicos versionados (v1)
+├── docs/                               # Constitución de ingeniería y ADRs
+├── tests/                              # Batería de pruebas por fases de desarrollo
+└── working/                            # Salidas dinámicas efímeras y ledger de auditoría
 ```
 
 ---

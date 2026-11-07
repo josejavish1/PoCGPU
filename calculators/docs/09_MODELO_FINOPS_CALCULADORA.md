@@ -105,33 +105,11 @@ $$\text{Tokens Break-Even} = \frac{\text{TCO Mensual}}{\$4.375 / 10^6}$$
 
 ---
 
-## 4. Guía Operativa de la Herramienta CLI
+## 4. Arquitectura de Implementación y Consumo
 
-El script `scripts/finops_tier1_engine.py` implementa este modelo de extremo a extremo:
+El modelo se implementa mediante dos motores desacoplados en el paquete canónico `pocgpu` y sus interfaces en `calculators/`:
 
-### Ejemplo 1: Simulación del Clúster Actual PoCGPU (Mistral 7B en 2x L4 Spot)
-```bash
-python3 scripts/finops_tier1_engine.py \
-  --model mistral-7b \
-  --gpu NVIDIA_L4 \
-  --precision FP16 \
-  --context 4096 \
-  --concurrency 24 \
-  --spot
-```
+- **Calculadora A (`calculators/sizing`):** Implementada en `pocgpu.domain.capacity` y `pocgpu.application.capacity_orchestrator`. Resuelve la física del silicio, límites de VRAM, KV Cache y concurrencia máxima.
+- **Calculadora B (`calculators/chargeback`):** Implementada en `pocgpu.domain.tco`, `pocgpu.domain.economics` y `pocgpu.application.economics_service`. Resuelve la amortización fully-loaded, el coste por millón de tokens y el punto de equilibrio frente a APIs comerciales.
 
-### Ejemplo 2: Dimensionamiento de Llama 3.1 70B FP8 en H100
-```bash
-python3 scripts/finops_tier1_engine.py \
-  --model llama3-70b \
-  --gpu NVIDIA_H100_80GB \
-  --precision FP8 \
-  --context 8192 \
-  --concurrency 32 \
-  --spot
-```
-
-### Ejemplo 3: Exportación JSON para LiteLLM / PostgreSQL
-```bash
-python3 scripts/finops_tier1_engine.py --model mistral-7b --json
-```
+*(Nota: El script legacy `finops_tier1_engine.py` fue migrado y sustituido por esta arquitectura modular bajo la Constitución de Ingeniería).*

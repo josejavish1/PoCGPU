@@ -126,6 +126,15 @@
         ]
       },
       {
+        "path": "PHASE_2_COMPLETION_REPORT.md",
+        "required_headings": [
+          "# Phase 2 Completion Report",
+          "## Status",
+          "## Evidence",
+          "## Acceptance review"
+        ]
+      },
+      {
         "path": "PHASE_3_PLAN.md",
         "required_headings": [
           "# Phase 3 Plan: Fully Loaded TCO and Accounting Views",
@@ -139,6 +148,15 @@
           "## Delivery increments",
           "## Acceptance criteria",
           "## Stop conditions"
+        ]
+      },
+      {
+        "path": "PHASE_3_COMPLETION_REPORT.md",
+        "required_headings": [
+          "# Phase 3 Completion Report",
+          "## Status",
+          "## Evidence",
+          "## Acceptance review"
         ]
       },
       {
@@ -666,7 +684,7 @@
       "scripts",
       "tests",
       "config",
-      "manifests",
+      "pocs/gke-vllm-zurich/manifests",
       ".github"
     ],
     "extensions": [
