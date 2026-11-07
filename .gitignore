@@ -33,3 +33,6 @@ Thumbs.db
 *.token
 credentials.json
 service_account.json
+
+# Scratchpad and working directories
+working/

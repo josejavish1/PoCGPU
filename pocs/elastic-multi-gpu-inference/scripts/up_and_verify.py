@@ -130,9 +130,11 @@ def wait_for_deployments(timeout_seconds: int = 300) -> bool:
     """Waits for core deployments to achieve readiness."""
     print(f"[*] Waiting up to {timeout_seconds}s for Kubernetes deployments to be Ready...")
     deployments = [
-        "deployment/litellm-gateway",
-        "deployment/openwebui",
+        "deployment/litellm-db",
+        "deployment/enterprise-ai-gateway",
+        "deployment/open-webui",
         "deployment/grafana",
+        "deployment/vllm-inference-engine",
     ]
     start_time = time.time()
     for dep in deployments:
@@ -206,7 +208,7 @@ def test_inference(
     payload = {
         "model": model_name,
         "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 40,
+        "max_tokens": 60,
         "temperature": 0.1,
     }
     headers = {
@@ -219,7 +221,8 @@ def test_inference(
             ttft_ms = (time.time() - start) * 1000.0
             if resp.status_code == 200:
                 data = resp.json()
-                content = data["choices"][0]["message"]["content"].strip().replace("\n", " ")
+                raw_content = data.get("choices", [{}])[0].get("message", {}).get("content") or ""
+                content = raw_content.strip().replace("\n", " ")
                 return ModelVerification(model_name, model_type, "SUCCESS", ttft_ms, content[:80])
             else:
                 return ModelVerification(model_name, model_type, f"FAILED (HTTP {resp.status_code})", ttft_ms, resp.text[:80])

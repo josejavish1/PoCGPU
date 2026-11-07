@@ -8,6 +8,8 @@ metadata:
     replica: "2"
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: vllm-engine
@@ -26,11 +28,16 @@ spec:
       - name: vllm-server
         image: vllm/vllm-openai:v0.6.3
         args:
-        - "--model=/models/Mistral-7B-Instruct-v0.3"
+        - "--model=/models/Mistral-7B-Instruct-v0.3-FP8"
         - "--served-model-name=mistral-base"
         - "--tensor-parallel-size=2"
-        - "--gpu-memory-utilization=0.85"
+        - "--gpu-memory-utilization=0.92"
+        - "--kv-cache-dtype=fp8"
+        - "--enable-prefix-caching"
+        - "--max-num-batched-tokens=4096"
+        - "--block-size=32"
         - "--max-model-len=4096"
+        - "--num-scheduler-steps=8"
         - "--enable-lora"
         - "--max-loras=4"
         - "--max-lora-rank=64"
@@ -41,6 +48,8 @@ spec:
         - "--trust-remote-code"
         - "--disable-log-requests"
         env:
+        - name: VLLM_ATTENTION_BACKEND
+          value: "FLASHINFER"
         - name: NCCL_DEBUG
           value: "INFO"
         - name: NCCL_IB_DISABLE
@@ -64,19 +73,22 @@ spec:
             path: /health
             port: 8000
           initialDelaySeconds: 120
-          periodSeconds: 10
+          periodSeconds: 15
+          timeoutSeconds: 5
+          failureThreshold: 5
         readinessProbe:
           httpGet:
             path: /health
             port: 8000
           initialDelaySeconds: 90
           periodSeconds: 5
+          timeoutSeconds: 3
         volumeMounts:
         - name: dshm
           mountPath: /dev/shm
         - name: models-volume
           mountPath: /models
-          readOnly: true
+          readOnly: false
       volumes:
       - name: dshm
         emptyDir:
@@ -85,4 +97,4 @@ spec:
       - name: models-volume
         persistentVolumeClaim:
           claimName: llm-weights-cache-pvc-2
-          readOnly: true
+          readOnly: false
