@@ -44,10 +44,11 @@ Queda terminantemente prohibido proponer o implementar las siguientes soluciones
 │
 ├── pocs/                               # Entorno declarativo para PoCs de infraestructura Cloud/K8s
 │   ├── README.md                       # Índice y guía de adición de nuevas PoCs
-│   └── gke-vllm-zurich/                # PoC clúster GKE Zúrich (4x L4 GPUs, TP=2, LiteLLM)
+│   └── elastic-multi-gpu-inference/    # PoC clúster GKE Zúrich (4x L4 GPUs, TP=2, LiteLLM)
 │       ├── README.md                   # Topología y comandos de arranque/hibernación
 │       ├── manifests/                  # Manifiestos de Kubernetes (vLLM, Gateway, OpenWebUI)
-│       └── runbooks/                   # Guías operativas paso a paso (00_ a 08_)
+│       ├── runbooks/                   # Guías operativas paso a paso (00_ a 08_)
+│       └── scripts/                    # Scripts de benchmark de carga y sondas de saturación
 │
 ├── calculators/                        # Calculadoras FinOps desacopladas
 │   ├── README.md                       # Índice y principios de desacoplamiento
@@ -91,6 +92,7 @@ Queda terminantemente prohibido proponer o implementar las siguientes soluciones
 
 ## 5. Estado Actual del Proyecto y Roadmap
 
+### A. PoC de Infraestructura Física (`pocs/elastic-multi-gpu-inference/`)
 - [x] **Vía A (Interfaz Web Corporativa):** OpenWebUI operativo en puerto 80 estándar con directorio corporativo de NTT DATA.
 - [x] **Vía B (Asistente de Programación):** Continue.dev enlazado con la clave `sk-9od6eun2IyOt7Qj8NZFeVQ` y el adaptador `coding-agent`.
 - [x] **Vía C (Gobernanza Multi-Departamento):** 6 departamentos, cuotas presupuestarias en PostgreSQL, limitación RPM y analítica de caché.
@@ -98,6 +100,21 @@ Queda terminantemente prohibido proponer o implementar las siguientes soluciones
 - [x] **Vía D (Paso 1 - Alta Disponibilidad Activo-Activo):** 4x GPUs en 2 servidores balanceados por LiteLLM con rendimiento certificado de hasta 689 tokens/s en saturación.
 - [ ] **Vía D (Paso 2 - PENDIENTE):** Prueba de Caída en Caliente (*Chaos Engineering*) deteniendo el Servidor 1 durante una ráfaga para verificar desvío al Servidor 2 sin pérdida de peticiones.
 - [ ] **Vía D (Paso 3 - PENDIENTE):** Implementación de script de auto-degradación mono-GPU (`tensor-parallel-size=1`).
+- **Estado de Cómputo:** Hibernado a coste $0.00/h. Discos zonales persistentes intactos en Zúrich.
+
+### B. Calculadora A: Sizing y Física del Silicio (`calculators/sizing/`)
+- [x] **Especificación Matemática:** Aprobada y documentada en `calculators/docs/09_MODELO_FINOPS_CALCULADORA.md` (VRAM pesos, KV Cache con GQA y Roofline).
+- [x] **Modelo de Dominio:** Implementado en `src/pocgpu/domain/capacity/` y orquestado en `src/pocgpu/application/capacity_orchestrator.py`.
+- [ ] **Empaquetado Independiente y CLI:** Puntos de entrada dedicados en `calculators/sizing/src/`.
+
+### C. Calculadora B: Chargeback y TCO Empresarial (`calculators/chargeback/`)
+- [x] **Especificación Matemática:** Aprobada y documentada en `calculators/docs/09_MODELO_FINOPS_CALCULADORA.md` (TCO amortizado, tarifario $/1M tokens y break-even).
+- [x] **Modelo de Dominio:** Implementado en `src/pocgpu/domain/tco/`, `src/pocgpu/domain/economics/` y `src/pocgpu/application/economics_service.py`.
+- [ ] **Empaquetado Independiente y CLI:** Puntos de entrada dedicados en `calculators/chargeback/src/`.
+
+### D. Motor Canónico y Shared Kernel (`src/pocgpu/`)
+- [x] **Fase 1 (Fundación Gobernada):** Certificada con 100% de cumplimiento de la Constitución de Ingeniería y CI determinista.
+- [ ] **Fases 2 a 8:** En proceso de gobernanza según el roadmap de entrega (`docs/engineering-constitution/DELIVERY_ROADMAP.md`).
 
 ---
 

@@ -10,7 +10,7 @@ This directory contains the declarative manifests and operational runbooks for t
 ## Directory Structure
 
 ```text
-pocs/gke-vllm-zurich/
+pocs/elastic-multi-gpu-inference/
 ├── manifests/                    # Declarative Kubernetes manifests
 │   ├── 01_gpu_audit.yaml        # GPU interconnect audit and bandwidth test
 │   ├── 02_storage.yaml          # Base PVC and Safetensors preload job

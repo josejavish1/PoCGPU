@@ -47,7 +47,7 @@ Al usar Mistral-7B sobre 2 GPUs L4 (48 GB totales de VRAM), los pesos ocupan sol
 Para no necesitar 100 clientes enviando peticiones durante horas para ver cómo se comporta la saturación, ajustamos el flag `--gpu-memory-utilization` a un valor bajo (ej. `0.40`). Esto limita artificialmente el espacio de KV Cache, provocando que **con solo 6 a 8 usuarios simultáneos el sistema entre en saturación, active la cola de espera y demuestre la resiliencia**:
 
 ```yaml
-# Fragmento para pocs/gke-vllm-zurich/manifests/03_vllm_service.yaml adaptado a Mistral-7B Spot
+# Fragmento para pocs/elastic-multi-gpu-inference/manifests/03_vllm_service.yaml adaptado a Mistral-7B Spot
 containers:
 - name: vllm-server
   image: vllm/vllm-openai:v0.6.3
@@ -64,8 +64,8 @@ containers:
 
 ## 5. Protocolo de Pruebas de Mínimo Coste
 
-1. **Levantar:** Aplicar los manifiestos (`kubectl apply -f pocs/gke-vllm-zurich/manifests/`).
-2. **Medir y Saturar:** Ejecutar `python3 pocs/gke-vllm-zurich/scripts/benchmark.py --concurrency 8 --rounds 3`.
+1. **Levantar:** Aplicar los manifiestos (`kubectl apply -f pocs/elastic-multi-gpu-inference/manifests/`).
+2. **Medir y Saturar:** Ejecutar `python3 pocs/elastic-multi-gpu-inference/scripts/benchmark.py --concurrency 8 --rounds 3`.
 3. **Comprobar:** Revisar la cola en el Dashboard Web de LiteLLM (`http://localhost:4000/ui`).
 4. **Destruir Inmediatamente:**
    ```bash

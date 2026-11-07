@@ -6,7 +6,7 @@ Cada subdirectorio representa una PoC completamente aislada y autónoma con sus 
 
 ## PoCs Disponibles
 
-- **`gke-vllm-zurich/`:** Clúster GKE en Zúrich (`europe-west6-b`) con 4x NVIDIA L4 GPUs, vLLM con Tensor Parallelism (TP=2), Multi-LoRA dinámico, LiteLLM Enterprise Gateway en CPU y frontend OpenWebUI.
+- **`elastic-multi-gpu-inference/`:** Clúster GKE en Zúrich (`europe-west6-b`) con 4x NVIDIA L4 GPUs, vLLM con Tensor Parallelism (TP=2), Multi-LoRA dinámico, LiteLLM Enterprise Gateway en CPU y frontend OpenWebUI.
 
 ## Convención para Nuevas PoCs
 

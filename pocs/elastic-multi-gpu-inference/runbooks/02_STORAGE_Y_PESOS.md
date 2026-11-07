@@ -36,10 +36,10 @@ El peso de un modelo de 32 mil millones de parámetros (32B) en precisión compl
 
 ## 4. Despliegue del Almacenamiento y Pre-Carga de Pesos
 
-Aplique el manifiesto de volumen y el Job de precarga ubicado en `pocs/gke-vllm-zurich/manifests/02_storage.yaml`:
+Aplique el manifiesto de volumen y el Job de precarga ubicado en `pocs/elastic-multi-gpu-inference/manifests/02_storage.yaml`:
 
 ```bash
-kubectl apply -f pocs/gke-vllm-zurich/manifests/02_storage.yaml
+kubectl apply -f pocs/elastic-multi-gpu-inference/manifests/02_storage.yaml
 ```
 
 Supervise el progreso de la precarga:
@@ -60,4 +60,4 @@ Los pesos del modelo de razonamiento y las carpetas para adaptadores LoRA ligero
 En modelos Transformer, las matrices de un adaptador LoRA deben coincidir exactamente con las dimensiones de la arquitectura base:
 - `Qwen-2.5-32B` tiene una dimensión oculta (`hidden_size`) de **5120** y **64 capas**.
 - Si se intenta montar un adaptador LoRA entrenado para otro modelo (ej. Llama-7B con dimensión 4096 y 32 capas), el motor vLLM fallará en el arranque con un error de discrepancia de dimensiones (`RuntimeError: shape mismatch`).
-- El Job de precarga (`pocs/gke-vllm-zurich/manifests/02_storage.yaml`) descarga los pesos base de Qwen-2.5-32B y sintetiza automáticamente adaptadores LoRA compatibles con las dimensiones exactas ($5120 \times 8$), permitiendo validar la arquitectura multi-modelo de inmediato sin requerir un entrenamiento previo.
+- El Job de precarga (`pocs/elastic-multi-gpu-inference/manifests/02_storage.yaml`) descarga los pesos base de Qwen-2.5-32B y sintetiza automáticamente adaptadores LoRA compatibles con las dimensiones exactas ($5120 \times 8$), permitiendo validar la arquitectura multi-modelo de inmediato sin requerir un entrenamiento previo.

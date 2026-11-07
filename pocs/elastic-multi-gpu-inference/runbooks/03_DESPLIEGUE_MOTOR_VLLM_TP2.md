@@ -2,7 +2,7 @@
 
 ## 1. Justificación de los Parámetros de Inferencia de Producción
 
-El manifiesto `pocs/gke-vllm-zurich/manifests/03_vllm_service.yaml` implementa la directiva SOTA para consolidar múltiples modelos en un único proceso distribuido sobre las 2 GPUs:
+El manifiesto `pocs/elastic-multi-gpu-inference/manifests/03_vllm_service.yaml` implementa la directiva SOTA para consolidar múltiples modelos en un único proceso distribuido sobre las 2 GPUs:
 
 1. `--tensor-parallel-size=2`:
    - Lanza 2 workers paralelos vinculados a `/dev/nvidia0` y `/dev/nvidia1`.
@@ -39,7 +39,7 @@ Por esta razón, se define un `startupProbe` con `failureThreshold: 30` y `perio
 Aplique el despliegue del motor y su Service de red interna:
 
 ```bash
-kubectl apply -f pocs/gke-vllm-zurich/manifests/03_vllm_service.yaml
+kubectl apply -f pocs/elastic-multi-gpu-inference/manifests/03_vllm_service.yaml
 ```
 
 Supervise la inicialización y los logs de NCCL / vLLM:

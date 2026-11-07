@@ -4,13 +4,16 @@ PoCGPU is a governed foundation for a universal AI infrastructure economics calc
 
 ## Current status
 
-Phase 0 established the [Engineering Constitution](docs/engineering-constitution/README.md). Phase 1 is complete with its evidence recorded in the [Phase 1 completion report](docs/engineering-constitution/PHASE_1_COMPLETION_REPORT.md). The independent plans for phases 2 through 8 are published as drafts under the [delivery roadmap](docs/engineering-constitution/DELIVERY_ROADMAP.md) and require review and acceptance before implementation.
-
-The current foundation intentionally does not implement capacity, TCO, unit economics, pricing, or external comparison formulas. Requests for these later-phase domains fail closed with a structured `OUTPUT_DOMAIN_UNAVAILABLE` issue. Existing calculator outputs are retained only as migration evidence and are not correctness oracles.
+| Domain | Directory | Primary Scope | Operational / Implementation Status |
+| :--- | :--- | :--- | :--- |
+| **Cloud Infrastructure PoC** | `pocs/elastic-multi-gpu-inference/` | GKE Zurich (`europe-west6-b`), 4x NVIDIA L4 GPUs, vLLM TP=2 + Multi-LoRA, LiteLLM Gateway, OpenWebUI | **Operational & Hibernated ($0.00/h):** Tracks A, B, C, and D-Step 1 (Active-Active at 689 tok/s) certified. Pending: D-Step 2 (Chaos failover). |
+| **Calculadora A (Sizing)** | `calculators/sizing/` | Silicon physics, static weights VRAM, dynamic KV cache (GQA), roofline bandwidth saturation | **Specified & Modeled:** Formulas approved in `09_MODELO_FINOPS_CALCULADORA.md`; implemented in `pocgpu.domain.capacity`. |
+| **Calculadora B (Chargeback)** | `calculators/chargeback/` | Fully-loaded TCO (hardware, energy, PUE cooling, datacenter), $/1M tokens rate card, break-even vs cloud APIs | **Specified & Modeled:** Formulas approved in `09_MODELO_FINOPS_CALCULADORA.md`; implemented in `pocgpu.domain.tco` and `economics`. |
+| **Canonical Engine / Shared Kernel** | `src/pocgpu/` | Exact numeric models, immutable types (`Money`), deterministic policy resolution, schemas v1 | **Phase 1 Certified:** Governed by [Engineering Constitution](docs/engineering-constitution/README.md) with 100% formal CI quality gates. |
 
 ## Repository structure
 
-- `pocs/`: Declarative cloud PoC infrastructure environments (e.g. `pocs/gke-vllm-zurich/` containing Kubernetes manifests and operational runbooks).
+- `pocs/`: Declarative cloud PoC infrastructure environments (e.g. `pocs/elastic-multi-gpu-inference/` containing Kubernetes manifests, runbooks, and load testing scripts).
 - `calculators/`: Decoupled calculators for Silicon Sizing (`calculators/sizing/`) and Chargeback/TCO (`calculators/chargeback/`), with domain specifications under `calculators/docs/`.
 - `src/pocgpu/`: Canonical calculation engine and shared kernel (domain primitives, exact numeric models, and evaluation pipelines).
 - `config/`: Governed catalogs for hardware, pricing, models, and taxonomies.

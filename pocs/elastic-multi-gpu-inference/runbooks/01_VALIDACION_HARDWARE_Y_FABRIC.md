@@ -9,10 +9,10 @@ En un modelo configurado con `tensor_parallel_size: 2`, el cálculo matricial se
 
 ## 2. Despliegue del Pod de Auditoría
 
-Aplique el manifiesto de diagnóstico ubicado en `pocs/gke-vllm-zurich/manifests/01_gpu_audit.yaml`:
+Aplique el manifiesto de diagnóstico ubicado en `pocs/elastic-multi-gpu-inference/manifests/01_gpu_audit.yaml`:
 
 ```bash
-kubectl apply -f pocs/gke-vllm-zurich/manifests/01_gpu_audit.yaml
+kubectl apply -f pocs/elastic-multi-gpu-inference/manifests/01_gpu_audit.yaml
 ```
 
 Espere a que el Pod alcance el estado `Running`:

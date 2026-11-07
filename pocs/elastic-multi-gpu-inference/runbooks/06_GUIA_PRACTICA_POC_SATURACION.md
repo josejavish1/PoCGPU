@@ -120,7 +120,7 @@ Lance el generador de carga para forzar la saturación del sistema:
 
 ```bash
 # Lanzar 24 clientes concurrentes con prompts largos de razonamiento durante 5 rondas
-python3 pocs/gke-vllm-zurich/scripts/benchmark.py \
+python3 pocs/elastic-multi-gpu-inference/scripts/benchmark.py \
   --url http://localhost:4000 \
   --key sk-tier1-master-governance-key-2026 \
   --concurrency 24 \
